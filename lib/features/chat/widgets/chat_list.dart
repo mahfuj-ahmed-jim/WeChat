@@ -48,7 +48,7 @@ class _ChatListState extends ConsumerState<ChatList> {
           });
 
           return ListView.builder(
-            reverse: false,
+            reverse: true,
             controller: messageController,
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
@@ -67,21 +67,26 @@ class _ChatListState extends ConsumerState<ChatList> {
               }
               if (messageList[index].senderId ==
                   FirebaseAuth.instance.currentUser!.uid) {
-                return MyMessageCard(
-                  message: '${messageList[index].text} $index',
-                  date: timeSent,
-                  type: messageList[index].type,
-                  username: messageList[index].repliedTo,
-                  isSeen: messageList[index].isSeen,
-                  previousMessage: index != 0 &&
-                          messageList[index - 1].senderId ==
-                              FirebaseAuth.instance.currentUser!.uid
-                      ? true
-                      : index == 0 &&
-                              messageList[index + 1].senderId ==
-                                  FirebaseAuth.instance.currentUser!.uid
-                          ? true
-                          : false,
+                return Padding(
+                  padding: index == (snapshot.data!.length) - 1
+                      ? const EdgeInsets.only(top: 10)
+                      : EdgeInsets.zero,
+                  child: MyMessageCard(
+                    message: messageList[index].text,
+                    date: timeSent,
+                    type: messageList[index].type,
+                    username: messageList[index].repliedTo,
+                    isSeen: messageList[index].isSeen,
+                    previousMessage: index != 0 &&
+                            messageList[index - 1].senderId ==
+                                FirebaseAuth.instance.currentUser!.uid
+                        ? true
+                        : index == 0 &&
+                                messageList[index + 1].senderId ==
+                                    FirebaseAuth.instance.currentUser!.uid
+                            ? true
+                            : false,
+                  ),
                 );
               }
               return SenderMessageCard(
@@ -91,6 +96,15 @@ class _ChatListState extends ConsumerState<ChatList> {
                 username: messageList[index].repliedTo,
                 repliedMessageType: messageList[index].repliedMessageType,
                 repliedText: '',
+                previousMessage: index != 0 &&
+                            messageList[index - 1].senderId !=
+                                FirebaseAuth.instance.currentUser!.uid
+                        ? true
+                        : index == 0 &&
+                                messageList[index + 1].senderId !=
+                                    FirebaseAuth.instance.currentUser!.uid
+                            ? true
+                            : false,
               );
             },
           );

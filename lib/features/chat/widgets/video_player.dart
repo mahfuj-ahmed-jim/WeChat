@@ -15,6 +15,7 @@ class VideoPlayer extends StatefulWidget {
 class _VideoPlayerState extends State<VideoPlayer> {
   late CachedVideoPlayerController videoPlayerController;
   bool isPlay = false;
+  double aspectRatio = 16 / 9;
 
   @override
   void initState() {
@@ -22,6 +23,9 @@ class _VideoPlayerState extends State<VideoPlayer> {
     videoPlayerController = CachedVideoPlayerController.network(widget.videoUrl)
       ..initialize().then((value) {
         videoPlayerController.setVolume(1);
+        setState(() {
+          aspectRatio = videoPlayerController.value.size.aspectRatio;
+        });
       });
   }
 
@@ -34,7 +38,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 16 / 9,
+      aspectRatio: aspectRatio,
       child: Stack(
         children: [
           CachedVideoPlayer(videoPlayerController),

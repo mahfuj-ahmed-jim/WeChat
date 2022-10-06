@@ -25,65 +25,86 @@ class MyMessageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.centerRight,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width - 45, minWidth: 160),
-        child: Card(
-          elevation: 1,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(8),
-                  topRight: Radius.circular(8),
-                  bottomRight: Radius.circular(8),
-                  bottomLeft: Radius.circular(8))),
-          color: messageColor,
-          margin: EdgeInsets.symmetric(horizontal: 15, vertical: previousMessage? 1.5 : 6),
-          child: Stack(
-            children: [
-              Padding(
-                padding: type == MessageEnum.text
-                    ? const EdgeInsets.only(
-                        left: 10.5,
-                        right: 10.5,
-                        top: 6,
-                        bottom: 25,
-                      )
-                    : const EdgeInsets.all(2),
-                child: DisplayMessage(
-                  message: message,
-                  type: type,
-                ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          type == MessageEnum.text
+              ? Container()
+              : IconButton(
+                onPressed: (() {}),
+                icon: const Icon(Icons.share),
               ),
-              Positioned(
-                bottom: 4,
-                right: 10,
-                child: Row(
-                  children: [
-                    Text(
-                      date,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: type == MessageEnum.text
-                            ? Colors.white60
-                            : Colors.white,
-                      ),
+          ConstrainedBox(
+            constraints: type != MessageEnum.text
+                ? BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width - 70,
+                    minWidth: 160,
+                    maxHeight: (MediaQuery.of(context).size.height / 2) - 70
+                  )
+                : BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width - 45,
+                    minWidth: 160,
+                  ),
+            child: Card(
+              elevation: 1,
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                      topRight: Radius.circular(8),
+                      bottomRight: Radius.circular(8),
+                      bottomLeft: Radius.circular(8))),
+              color: messageColor,
+              margin: EdgeInsets.symmetric(
+                  horizontal: 15, vertical: previousMessage ? 1.5 : 5),
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: type == MessageEnum.text
+                        ? const EdgeInsets.only(
+                            left: 10.5,
+                            right: 10.5,
+                            top: 6,
+                            bottom: 25,
+                          )
+                        : const EdgeInsets.all(2),
+                    child: DisplayMessage(
+                      message: message,
+                      type: type,
                     ),
-                    const SizedBox(
-                      width: 5,
+                  ),
+                  Positioned(
+                    bottom: 4,
+                    right: 10,
+                    child: Row(
+                      children: [
+                        Text(
+                          date,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: type == MessageEnum.text
+                                ? Colors.white60
+                                : Colors.white,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Icon(
+                          Icons.done_all,
+                          size: 20,
+                          color: type == MessageEnum.text
+                              ? Colors.white60
+                              : Colors.white,
+                        ),
+                      ],
                     ),
-                    Icon(
-                      Icons.done_all,
-                      size: 20,
-                      color: type == MessageEnum.text
-                          ? Colors.white60
-                          : Colors.white,
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
