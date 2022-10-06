@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:wechat/common/utils/colors.dart';
 import 'package:wechat/common/widgets/loader.dart';
 import 'package:wechat/features/auth/controller/auth_controller.dart';
@@ -38,7 +39,7 @@ class MobileChatScreen extends ConsumerWidget {
         backgroundColor: appBarColor,
         leading: IconButton(
           onPressed: (() {
-                Navigator.pop(context);
+            Navigator.pop(context);
           }),
           icon: const Icon(Icons.arrow_back),
         ),
@@ -60,7 +61,9 @@ class MobileChatScreen extends ConsumerWidget {
                         ),
                         radius: 20,
                       ),
-                      const SizedBox(width: 10,),
+                      const SizedBox(
+                        width: 10,
+                      ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -72,11 +75,12 @@ class MobileChatScreen extends ConsumerWidget {
                             ),
                           ),
                           Text(
-                            snapshot.data!.isOnline ? 'online' : 'offline',
-                            style: const TextStyle(
-                              color: greyColor,
-                              fontSize: 12
-                            ),
+                            snapshot.data!.isOnline
+                                ? 'online'
+                                : 'last seen  at ${DateFormat('hh:mm a')
+                                    .format(snapshot.data!.lastSeen)}',
+                            style:
+                                const TextStyle(color: greyColor, fontSize: 12),
                           ),
                         ],
                       ),
@@ -86,14 +90,17 @@ class MobileChatScreen extends ConsumerWidget {
         centerTitle: false,
         actions: [
           IconButton(
+            constraints: const BoxConstraints(),
             onPressed: () => makeCall(ref, context),
             icon: const Icon(Icons.video_call),
           ),
           IconButton(
+            constraints: const BoxConstraints(),
             onPressed: () {},
             icon: const Icon(Icons.call),
           ),
           IconButton(
+            constraints: const BoxConstraints(),
             onPressed: () {},
             icon: const Icon(Icons.more_vert),
           ),

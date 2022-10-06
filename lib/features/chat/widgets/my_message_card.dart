@@ -9,6 +9,7 @@ class MyMessageCard extends StatelessWidget {
   final MessageEnum type;
   final String username;
   final bool isSeen;
+  final bool previousMessage;
 
   const MyMessageCard({
     Key? key,
@@ -17,6 +18,7 @@ class MyMessageCard extends StatelessWidget {
     required this.type,
     required this.username,
     required this.isSeen,
+    required this.previousMessage,
   }) : super(key: key);
 
   @override
@@ -28,9 +30,14 @@ class MyMessageCard extends StatelessWidget {
             maxWidth: MediaQuery.of(context).size.width - 45, minWidth: 160),
         child: Card(
           elevation: 1,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  topRight: Radius.circular(8),
+                  bottomRight: Radius.circular(8),
+                  bottomLeft: Radius.circular(8))),
           color: messageColor,
-          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          margin: EdgeInsets.symmetric(horizontal: 15, vertical: previousMessage? 1.5 : 6),
           child: Stack(
             children: [
               Padding(
@@ -67,7 +74,9 @@ class MyMessageCard extends StatelessWidget {
                     Icon(
                       Icons.done_all,
                       size: 20,
-                      color: type == MessageEnum.text? Colors.white60 : Colors.white,
+                      color: type == MessageEnum.text
+                          ? Colors.white60
+                          : Colors.white,
                     ),
                   ],
                 ),

@@ -48,12 +48,13 @@ class _ChatListState extends ConsumerState<ChatList> {
           });
 
           return ListView.builder(
-            reverse: true,
+            reverse: false,
             controller: messageController,
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
               messageList = snapshot.data!.reversed.toList();
-              var timeSent = DateFormat('hh:mm a').format(messageList[index].timeSent);
+              var timeSent =
+                  DateFormat('hh:mm a').format(messageList[index].timeSent);
 
               if (!messageList[index].isSeen &&
                   messageList[index].recieverid ==
@@ -67,11 +68,20 @@ class _ChatListState extends ConsumerState<ChatList> {
               if (messageList[index].senderId ==
                   FirebaseAuth.instance.currentUser!.uid) {
                 return MyMessageCard(
-                  message: messageList[index].text,
+                  message: '${messageList[index].text} $index',
                   date: timeSent,
                   type: messageList[index].type,
                   username: messageList[index].repliedTo,
                   isSeen: messageList[index].isSeen,
+                  previousMessage: index != 0 &&
+                          messageList[index - 1].senderId ==
+                              FirebaseAuth.instance.currentUser!.uid
+                      ? true
+                      : index == 0 &&
+                              messageList[index + 1].senderId ==
+                                  FirebaseAuth.instance.currentUser!.uid
+                          ? true
+                          : false,
                 );
               }
               return SenderMessageCard(
