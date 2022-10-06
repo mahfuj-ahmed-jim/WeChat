@@ -12,26 +12,28 @@ class ConversationList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10.0),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            StreamBuilder<List<ChatContact>>(
-                stream: ref.watch(chatControllerProvider).chatContacts(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Loader();
-                  }
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          StreamBuilder<List<ChatContact>>(
+              stream: ref.watch(chatControllerProvider).chatContacts(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Loader();
+                }
 
-                  return ListView.builder(
-                    reverse: true,
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      var chatContactData = snapshot.data![index];
+                return ListView.builder(
+                  reverse: true,
+                  shrinkWrap: true,
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    var chatContactData = snapshot.data![index];
 
-                      return Column(
+                    return Padding(
+                      padding: index == snapshot.data!.length - 1
+                          ? const EdgeInsets.only(top: 10)
+                          : EdgeInsets.zero,
+                      child: Column(
                         children: [
                           InkWell(
                             onTap: () {
@@ -46,52 +48,90 @@ class ConversationList extends ConsumerWidget {
                                 },
                               );
                             },
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: ListTile(
-                                title: Text(
-                                  chatContactData.name,
-                                  maxLines: 1,
-                                  style: const TextStyle(
+                            child: ListTile(
+                              title: Text(
+                                chatContactData.name,
+                                maxLines: 1,
+                                style: TextStyle(
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 18,
-                                  ),
+                                    fontWeight:
+                                        chatContactData.unseenMessages == 0
+                                            ? FontWeight.normal
+                                            : FontWeight.bold),
+                              ),
+                              subtitle: Padding(
+                                padding: const EdgeInsets.only(top: 6.0),
+                                child: Text(
+                                  maxLines: 1,
+                                  chatContactData.lastMessage,
+                                  style: TextStyle(
+                                      color: chatContactData.unseenMessages == 0
+                                          ? Colors.grey
+                                          : Colors.white,
+                                      overflow: TextOverflow.ellipsis,
+                                      fontSize: 14,
+                                      fontWeight:
+                                          chatContactData.unseenMessages == 0
+                                              ? FontWeight.normal
+                                              : FontWeight.bold),
                                 ),
-                                subtitle: Padding(
-                                  padding: const EdgeInsets.only(top: 6.0),
-                                  child: Text(
-                                    maxLines: 1,
-                                    chatContactData.lastMessage,
-                                    style: const TextStyle(
-                                        overflow: TextOverflow.ellipsis,
-                                        fontSize: 15),
-                                  ),
+                              ),
+                              leading: CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                  chatContactData.profilePic,
                                 ),
-                                leading: CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                    chatContactData.profilePic,
+                                radius: 30,
+                              ),
+                              trailing: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    DateFormat('hh:mm a')
+                                        .format(chatContactData.timeSent),
+                                    style: TextStyle(
+                                      color: chatContactData.unseenMessages == 0
+                                          ? Colors.grey
+                                          : Colors.white,
+                                      fontSize: 13,
+                                      fontWeight:
+                                          chatContactData.unseenMessages == 0
+                                              ? FontWeight.normal
+                                              : FontWeight.bold
+                                    ),
                                   ),
-                                  radius: 30,
-                                ),
-                                trailing: Text(
-                                  DateFormat('hh:mm a')
-                                      .format(chatContactData.timeSent),
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 13,
-                                  ),
-                                ),
+                                  Padding(
+                                    padding: chatContactData.unseenMessages == 0
+                                        ? const EdgeInsets.only(top: 0.0)
+                                        : const EdgeInsets.only(top: 5.0),
+                                    child: CircleAvatar(
+                                      radius:
+                                          chatContactData.unseenMessages == 0
+                                              ? 0
+                                              : 10.5,
+                                      backgroundColor: tabColor,
+                                      child: Text(
+                                        '${chatContactData.unseenMessages}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 10,
+                                            color: Colors.white),
+                                      ),
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
                           ),
                           const Divider(color: dividerColor, indent: 85),
                         ],
-                      );
-                    },
-                  );
-                }),
-          ],
-        ),
+                      ),
+                    );
+                  },
+                );
+              }),
+        ],
       ),
     );
   }
