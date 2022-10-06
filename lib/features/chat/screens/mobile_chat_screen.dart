@@ -36,6 +36,13 @@ class MobileChatScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appBarColor,
+        leading: IconButton(
+          onPressed: (() {
+                Navigator.pop(context);
+          }),
+          icon: const Icon(Icons.arrow_back),
+        ),
+        titleSpacing: 0,
         title: isGroupChat
             ? Text(name)
             : StreamBuilder<UserModel>(
@@ -44,15 +51,34 @@ class MobileChatScreen extends ConsumerWidget {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Loader();
                   }
-                  return Column(
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(name),
-                      Text(
-                        snapshot.data!.isOnline ? 'online' : 'offline',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.normal,
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(
+                          profilePic,
                         ),
+                        radius: 20,
+                      ),
+                      const SizedBox(width: 10,),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                          ),
+                          Text(
+                            snapshot.data!.isOnline ? 'online' : 'offline',
+                            style: const TextStyle(
+                              color: greyColor,
+                              fontSize: 12
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   );

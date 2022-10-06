@@ -32,6 +32,7 @@ class ChatRepository {
         .collection('users')
         .doc(auth.currentUser!.uid)
         .collection('chats')
+        .orderBy('timeSent')
         .snapshots()
         .asyncMap((event) async {
       List<ChatContact> contacts = [];

@@ -25,6 +25,7 @@ class ConversationList extends ConsumerWidget {
                   }
 
                   return ListView.builder(
+                    reverse: true,
                     shrinkWrap: true,
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
@@ -50,15 +51,20 @@ class ConversationList extends ConsumerWidget {
                               child: ListTile(
                                 title: Text(
                                   chatContactData.name,
+                                  maxLines: 1,
                                   style: const TextStyle(
+                                    overflow: TextOverflow.ellipsis,
                                     fontSize: 18,
                                   ),
                                 ),
                                 subtitle: Padding(
                                   padding: const EdgeInsets.only(top: 6.0),
                                   child: Text(
+                                    maxLines: 1,
                                     chatContactData.lastMessage,
-                                    style: const TextStyle(fontSize: 15),
+                                    style: const TextStyle(
+                                        overflow: TextOverflow.ellipsis,
+                                        fontSize: 15),
                                   ),
                                 ),
                                 leading: CircleAvatar(
@@ -68,7 +74,7 @@ class ConversationList extends ConsumerWidget {
                                   radius: 30,
                                 ),
                                 trailing: Text(
-                                  DateFormat.Hm()
+                                  DateFormat('hh:mm a')
                                       .format(chatContactData.timeSent),
                                   style: const TextStyle(
                                     color: Colors.grey,

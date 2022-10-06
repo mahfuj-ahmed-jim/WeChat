@@ -20,7 +20,7 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
     super.initState();
     tabBarController = TabController(length: 3, vsync: this);
     WidgetsBinding.instance.addObserver(this);
-    ref.read(authControllerProvider).setUserState(true); // initially set online 
+    ref.read(authControllerProvider).setUserState(true); // initially set online
   }
 
   @override
@@ -57,19 +57,20 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
             'WeChat',
             style: TextStyle(
               fontSize: 20,
-              color: Colors.grey,
+              color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.search, color: Colors.grey),
-              onPressed: () {},
+              icon: const Icon(Icons.search, color: Colors.white),
+              onPressed: () {
+              },
             ),
             PopupMenuButton(
               icon: const Icon(
                 Icons.more_vert,
-                color: Colors.grey,
+                color: Colors.white,
               ),
               itemBuilder: (context) => [
                 /*PopupMenuItem(

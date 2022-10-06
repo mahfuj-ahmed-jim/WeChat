@@ -34,52 +34,52 @@ class _ChatListState extends ConsumerState<ChatList> {
 
   @override
   Widget build(BuildContext context) {
+    List<Message> messageList;
     return StreamBuilder<List<Message>>(
-        stream: ref
-                .read(chatControllerProvider)
-                .chatStream(widget.recieverUserId),
+        stream:
+            ref.read(chatControllerProvider).chatStream(widget.recieverUserId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Loader();
           }
 
           SchedulerBinding.instance.addPostFrameCallback((_) {
-            messageController
-                .jumpTo(messageController.position.maxScrollExtent);
+            messageController.jumpTo(0);
           });
 
           return ListView.builder(
+            reverse: true,
             controller: messageController,
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
-              final messageData = snapshot.data![index];
-              var timeSent = DateFormat.Hm().format(messageData.timeSent);
+              messageList = snapshot.data!.reversed.toList();
+              var timeSent = DateFormat('hh:mm a').format(messageList[index].timeSent);
 
-              if (!messageData.isSeen &&
-                  messageData.recieverid ==
+              if (!messageList[index].isSeen &&
+                  messageList[index].recieverid ==
                       FirebaseAuth.instance.currentUser!.uid) {
                 ref.read(chatControllerProvider).setChatMessageSeen(
                       context,
                       widget.recieverUserId,
-                      messageData.messageId,
+                      messageList[index].messageId,
                     );
               }
-              if (messageData.senderId ==
+              if (messageList[index].senderId ==
                   FirebaseAuth.instance.currentUser!.uid) {
                 return MyMessageCard(
-                  message: messageData.text,
+                  message: messageList[index].text,
                   date: timeSent,
-                  type: messageData.type,
-                  username: messageData.repliedTo,
-                  isSeen: messageData.isSeen,
+                  type: messageList[index].type,
+                  username: messageList[index].repliedTo,
+                  isSeen: messageList[index].isSeen,
                 );
               }
               return SenderMessageCard(
-                message: messageData.text,
+                message: messageList[index].text,
                 date: timeSent,
-                type: messageData.type,
-                username: messageData.repliedTo,
-                repliedMessageType: messageData.repliedMessageType,
+                type: messageList[index].type,
+                username: messageList[index].repliedTo,
+                repliedMessageType: messageList[index].repliedMessageType,
                 repliedText: '',
               );
             },

@@ -25,7 +25,6 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
   final TextEditingController _messageController = TextEditingController();
   bool isRecorderInit = false;
   bool isShowEmojiContainer = false;
-  bool isRecording = false;
   FocusNode focusNode = FocusNode();
 
   @override
@@ -43,10 +42,9 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
           );
       setState(() {
         _messageController.text = '';
+        isShowSendButton = false;
       });
-    } else {
-      
-    }
+    } else {}
   }
 
   void sendFileMessage(
@@ -113,14 +111,14 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
                       child: Row(
                         children: [
                           IconButton(
-                            onPressed: (){},
+                            onPressed: () {},
                             icon: const Icon(
                               Icons.emoji_emotions,
                               color: Colors.grey,
                             ),
                           ),
                           IconButton(
-                            onPressed: (){},
+                            onPressed: () {},
                             icon: const Icon(
                               Icons.gif,
                               color: Colors.grey,
@@ -176,11 +174,7 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
                 child: GestureDetector(
                   // ignore: sort_child_properties_last
                   child: Icon(
-                    isShowSendButton
-                        ? Icons.send
-                        : isRecording
-                            ? Icons.close
-                            : Icons.mic,
+                    isShowSendButton ? Icons.send : Icons.mic,
                     color: Colors.white,
                   ),
                   onTap: sendTextMessage,
