@@ -23,7 +23,7 @@ class LandingScreen extends StatelessWidget {
             const Text(
               'Welcome to WeChat',
               style: TextStyle(
-                fontSize: 26,
+                fontSize: 30,
                 fontWeight: FontWeight.w600,
               ),
             ),

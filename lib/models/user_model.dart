@@ -27,7 +27,7 @@ class UserModel {
       'phoneNumber': phoneNumber,
       'groupId': groupId,
       'status': status,
-      'lastSeen': lastSeen
+      'lastSeen': lastSeen.millisecondsSinceEpoch
     };
   }
 

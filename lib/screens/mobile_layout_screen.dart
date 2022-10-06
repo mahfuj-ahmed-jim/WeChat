@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wechat/common/utils/colors.dart';
 import 'package:wechat/features/auth/controller/auth_controller.dart';
+import 'package:wechat/features/chat/widgets/conversation_list.dart';
 import 'package:wechat/features/select_contact/screens/select_contacts_screen.dart';
 
 class MobileLayoutScreen extends ConsumerStatefulWidget {
@@ -53,7 +54,7 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
           backgroundColor: appBarColor,
           centerTitle: false,
           title: const Text(
-            'WhatsApp',
+            'WeChat',
             style: TextStyle(
               fontSize: 20,
               color: Colors.grey,
@@ -108,7 +109,8 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
         body: TabBarView(
           controller: tabBarController,
           children: const [
-            //ContactsList(),
+            ConversationList(),
+            Text('Calls'),
             //StatusContactsScreen(),
             Text('Calls')
           ],
