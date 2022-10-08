@@ -41,7 +41,10 @@ class _VideoPlayerState extends State<VideoPlayer> {
       aspectRatio: aspectRatio,
       child: Stack(
         children: [
-          CachedVideoPlayer(videoPlayerController),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: CachedVideoPlayer(videoPlayerController)
+          ),
           Align(
             alignment: Alignment.center,
             child: IconButton(
