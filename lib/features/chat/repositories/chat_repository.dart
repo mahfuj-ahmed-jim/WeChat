@@ -104,15 +104,14 @@ class ChatRepository {
   ) async {
     // users -> reciever user id => chats -> current user id -> set data
     var recieverChatContact = ChatContact(
-      name: senderUserData.name,
-      phoneNumber: senderUserData.phoneNumber,
-      profilePic: senderUserData.profilePic,
-      contactId: senderUserData.uid,
-      timeSent: timeSent,
-      lastMessage: text,
-      isMe: false,
-      unseenMessages: 0
-    );
+        name: senderUserData.name,
+        phoneNumber: senderUserData.phoneNumber,
+        profilePic: senderUserData.profilePic,
+        contactId: senderUserData.uid,
+        timeSent: timeSent,
+        lastMessage: text,
+        isMe: false,
+        unseenMessages: 0);
     await firestore
         .collection('users')
         .doc(recieverUserId)
@@ -123,15 +122,14 @@ class ChatRepository {
         );
     // users -> current user id  => chats -> reciever user id -> set data
     var senderChatContact = ChatContact(
-      name: recieverUserData!.name,
-      phoneNumber: recieverUserData.phoneNumber,
-      profilePic: recieverUserData.profilePic,
-      contactId: recieverUserData.uid,
-      timeSent: timeSent,
-      lastMessage: text,
-      isMe: true,
-      unseenMessages: 0
-    );
+        name: recieverUserData!.name,
+        phoneNumber: recieverUserData.phoneNumber,
+        profilePic: recieverUserData.profilePic,
+        contactId: recieverUserData.uid,
+        timeSent: timeSent,
+        lastMessage: text,
+        isMe: true,
+        unseenMessages: 0);
     await firestore
         .collection('users')
         .doc(auth.currentUser!.uid)
@@ -154,17 +152,16 @@ class ChatRepository {
     required bool isGroupChat,
   }) async {
     final message = Message(
-      senderId: auth.currentUser!.uid,
-      recieverid: recieverUserId,
-      text: text,
-      type: messageType,
-      timeSent: timeSent,
-      messageId: messageId,
-      isSeen: false,
-      repliedMessage: '',
-      repliedTo: '',
-      repliedMessageType: MessageEnum.text
-    );
+        senderId: auth.currentUser!.uid,
+        recieverid: recieverUserId,
+        text: text,
+        type: messageType,
+        timeSent: timeSent,
+        messageId: messageId,
+        isSeen: false,
+        repliedMessage: '',
+        repliedTo: '',
+        repliedMessageType: MessageEnum.text);
     if (isGroupChat) {
       // groups -> group id -> chat -> message
       await firestore
