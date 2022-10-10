@@ -74,7 +74,7 @@ class SenderMessageCard extends StatelessWidget {
                       date,
                       style: TextStyle(
                         fontSize: 13,
-                        color: type == MessageEnum.text
+                        color: type == MessageEnum.text || type == MessageEnum.audio
                             ? Colors.white60
                             : Colors.white,
                       ),

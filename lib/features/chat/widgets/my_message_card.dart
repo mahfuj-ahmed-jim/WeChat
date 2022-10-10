@@ -82,7 +82,7 @@ class MyMessageCard extends StatelessWidget {
                           date,
                           style: TextStyle(
                             fontSize: 13,
-                            color: type == MessageEnum.text
+                            color: type == MessageEnum.text || type == MessageEnum.audio
                                 ? Colors.white60
                                 : Colors.white,
                           ),
@@ -93,7 +93,7 @@ class MyMessageCard extends StatelessWidget {
                         Icon(
                           Icons.done_all,
                           size: 20,
-                          color: type == MessageEnum.text
+                          color: type == MessageEnum.text || type == MessageEnum.audio
                               ? Colors.white60
                               : Colors.white,
                         ),
