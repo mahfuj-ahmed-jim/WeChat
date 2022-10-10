@@ -88,7 +88,7 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
           bottom: TabBar(
             controller: tabBarController,
             indicatorColor: tabColor,
-            indicatorWeight: 4,
+            indicatorWeight: 2.5,
             labelColor: tabColor,
             unselectedLabelColor: Colors.grey,
             labelStyle: const TextStyle(

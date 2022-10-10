@@ -18,7 +18,6 @@ class DisplayMessage extends StatefulWidget {
 }
 
 class _DisplayMessageState extends State<DisplayMessage> {
-
   @override
   Widget build(BuildContext context) {
     return widget.type == MessageEnum.text
@@ -35,8 +34,15 @@ class _DisplayMessageState extends State<DisplayMessage> {
                   imageUrl: widget.message,
                 ),
               )
-            : VideoPlayer(
-                videoUrl: widget.message,
-              );
+            : widget.type == MessageEnum.gif
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      imageUrl: widget.message,
+                    ),
+                  )
+                : VideoPlayer(
+                    videoUrl: widget.message,
+                  );
   }
 }
