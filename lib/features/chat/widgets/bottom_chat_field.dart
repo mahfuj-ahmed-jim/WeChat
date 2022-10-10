@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_sound/public/flutter_sound_recorder.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:wechat/common/enums/message_enum.dart';
 import 'package:wechat/common/utils/colors.dart';
 import 'package:wechat/common/utils/utils.dart';
@@ -24,28 +27,39 @@ class BottomChatField extends ConsumerStatefulWidget {
 class _BottomChatFieldState extends ConsumerState<BottomChatField> {
   bool isShowSendButton = false;
   final TextEditingController _messageController = TextEditingController();
+  FlutterSoundRecorder? _soundRecoder;
   bool isRecorderInit = false;
   bool isShowEmojiContainer = false;
+  bool isRecording = false;
   FocusNode focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
+    _soundRecoder = FlutterSoundRecorder();
+    openAudio();
+  }
+
+  void openAudio() async {
+    final status = await Permission.microphone.request();
+    if (status != PermissionStatus.granted) {
+      throw RecordingPermissionException('Mic permission not allowed!');
+    }
+    await _soundRecoder!.openRecorder();
+    isRecorderInit = true;
   }
 
   void sendTextMessage() async {
-    if (isShowSendButton) {
-      ref.read(chatControllerProvider).sendTextMessage(
-            context,
-            _messageController.text.trim(),
-            widget.recieverUserId,
-            widget.isGroupChat,
-          );
-      setState(() {
-        _messageController.text = '';
-        isShowSendButton = false;
-      });
-    } else {}
+    ref.read(chatControllerProvider).sendTextMessage(
+          context,
+          _messageController.text.trim(),
+          widget.recieverUserId,
+          widget.isGroupChat,
+        );
+    setState(() {
+      _messageController.text = '';
+      isShowSendButton = false;
+    });
   }
 
   void sendFileMessage(
@@ -59,6 +73,26 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
           messageEnum,
           widget.isGroupChat,
         );
+  }
+
+  void sendVoiceMessage() async {
+    var tempDir = await getTemporaryDirectory();
+    var path = '${tempDir.path}/flutter_sound.aac';
+    if (!isRecorderInit) {
+      return;
+    }
+    if (isRecording) {
+      await _soundRecoder!.stopRecorder();
+      sendFileMessage(File(path), MessageEnum.audio);
+    } else {
+      await _soundRecoder!.startRecorder(
+        toFile: path,
+      );
+    }
+
+    setState(() {
+      isRecording = !isRecording;
+    });
   }
 
   void selectImage() async {
@@ -117,6 +151,8 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
   void dispose() {
     super.dispose();
     _messageController.dispose();
+    _soundRecoder!.closeRecorder();
+    isRecorderInit = false;
   }
 
   @override
@@ -215,10 +251,16 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
                 child: GestureDetector(
                   // ignore: sort_child_properties_last
                   child: Icon(
-                    isShowSendButton ? Icons.send : Icons.mic,
+                    isShowSendButton
+                        ? Icons.send
+                        : isRecording
+                            ? Icons.record_voice_over
+                            : Icons.mic,
                     color: Colors.white,
                   ),
-                  onTap: sendTextMessage,
+                  onTap: (() => isShowSendButton
+                      ? sendTextMessage()
+                      : sendVoiceMessage()),
                 ),
               ),
             ),
