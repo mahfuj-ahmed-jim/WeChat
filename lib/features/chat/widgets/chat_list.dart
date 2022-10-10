@@ -47,66 +47,71 @@ class _ChatListState extends ConsumerState<ChatList> {
             messageController.jumpTo(0);
           });
 
-          return ListView.builder(
-            reverse: true,
-            controller: messageController,
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              messageList = snapshot.data!.reversed.toList();
-              var timeSent =
-                  DateFormat('hh:mm a').format(messageList[index].timeSent);
-
-              if (!messageList[index].isSeen &&
-                  messageList[index].recieverid ==
-                      FirebaseAuth.instance.currentUser!.uid) {
-                ref.read(chatControllerProvider).setChatMessageSeen(
-                      context,
-                      widget.recieverUserId,
-                      messageList[index].messageId,
-                    );
-              }
-              if (messageList[index].senderId ==
-                  FirebaseAuth.instance.currentUser!.uid) {
-                return Padding(
-                  padding: index == (snapshot.data!.length) - 1
-                      ? const EdgeInsets.only(top: 10)
-                      : EdgeInsets.zero,
-                  child: MyMessageCard(
-                    message: messageList[index].text,
-                    date: timeSent,
-                    type: messageList[index].type,
-                    username: messageList[index].repliedTo,
-                    isSeen: messageList[index].isSeen,
-                    previousMessage: index != 0 &&
-                            messageList[index - 1].senderId ==
-                                FirebaseAuth.instance.currentUser!.uid
-                        ? true
-                        : index == 0 &&
-                                messageList[index + 1].senderId ==
-                                    FirebaseAuth.instance.currentUser!.uid
-                            ? true
-                            : false,
-                  ),
+          return Align(
+            alignment: Alignment.topCenter,
+            child: ListView.builder(
+              reverse: true,
+              shrinkWrap: true,
+              controller: messageController,
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                messageList = snapshot.data!.reversed.toList();
+                var timeSent =
+                    DateFormat('hh:mm a').format(messageList[index].timeSent);
+          
+                if (!messageList[index].isSeen &&
+                    messageList[index].recieverid ==
+                        FirebaseAuth.instance.currentUser!.uid) {
+                  ref.read(chatControllerProvider).setChatMessageSeen(
+                        context,
+                        widget.recieverUserId,
+                        messageList[index].messageId,
+                      );
+                }
+                if (messageList[index].senderId ==
+                    FirebaseAuth.instance.currentUser!.uid) {
+                  return Padding(
+                    padding: index == (snapshot.data!.length) - 1
+                        ? const EdgeInsets.only(top: 10)
+                        : EdgeInsets.zero,
+                    child: MyMessageCard(
+                      message: messageList[index].text,
+                      date: timeSent,
+                      type: messageList[index].type,
+                      username: messageList[index].repliedTo,
+                      isSeen: messageList[index].isSeen,
+                      previousMessage: index != 0 &&
+                              messageList[index - 1].senderId ==
+                                  FirebaseAuth.instance.currentUser!.uid
+                          ? true
+                          : index == 0 &&
+                                  index != (snapshot.data!.length) - 1 &&
+                                  messageList[index + 1].senderId ==
+                                      FirebaseAuth.instance.currentUser!.uid
+                              ? true
+                              : false,
+                    ),
+                  );
+                }
+                return SenderMessageCard(
+                  message: messageList[index].text,
+                  date: timeSent,
+                  type: messageList[index].type,
+                  username: messageList[index].repliedTo,
+                  repliedMessageType: messageList[index].repliedMessageType,
+                  repliedText: '',
+                  previousMessage: index != 0 &&
+                          messageList[index - 1].senderId !=
+                              FirebaseAuth.instance.currentUser!.uid
+                      ? true
+                      : index == 0 &&
+                              messageList[index + 1].senderId !=
+                                  FirebaseAuth.instance.currentUser!.uid
+                          ? true
+                          : false,
                 );
-              }
-              return SenderMessageCard(
-                message: messageList[index].text,
-                date: timeSent,
-                type: messageList[index].type,
-                username: messageList[index].repliedTo,
-                repliedMessageType: messageList[index].repliedMessageType,
-                repliedText: '',
-                previousMessage: index != 0 &&
-                            messageList[index - 1].senderId !=
-                                FirebaseAuth.instance.currentUser!.uid
-                        ? true
-                        : index == 0 &&
-                                messageList[index + 1].senderId !=
-                                    FirebaseAuth.instance.currentUser!.uid
-                            ? true
-                            : false,
-              );
-            },
+              },
+            ),
           );
         });
   }
