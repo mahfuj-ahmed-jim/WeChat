@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wechat/common/enums/message_enum.dart';
+import 'package:wechat/common/provider/message_reply_provider.dart';
 import 'package:wechat/common/repositories/common_firebase_storage_repository.dart';
 import 'package:wechat/common/utils/utils.dart';
 import 'package:wechat/models/chat_contact_model.dart';
@@ -147,6 +148,7 @@ class ChatRepository {
     required String messageId,
     required String username,
     required MessageEnum messageType,
+    required MessageReply? messageReply,
     required String senderUsername,
     required String? recieverUserName,
     required bool isGroupChat,
@@ -159,9 +161,14 @@ class ChatRepository {
         timeSent: timeSent,
         messageId: messageId,
         isSeen: false,
-        repliedMessage: '',
-        repliedTo: '',
-        repliedMessageType: MessageEnum.text);
+        repliedMessage: messageReply == null ? '' : messageReply.message,
+        repliedTo: messageReply == null
+            ? ''
+            : messageReply.isMe
+                ? auth.currentUser!.uid
+                : recieverUserId,
+        repliedMessageType:
+            messageReply == null ? MessageEnum.text : messageReply.messageEnum);
     if (isGroupChat) {
       // groups -> group id -> chat -> message
       await firestore
@@ -204,6 +211,7 @@ class ChatRepository {
     required String recieverUserId,
     required UserModel senderUser,
     required bool isGroupChat,
+    required MessageReply? messageReply
   }) async {
     try {
       var timeSent = DateTime.now();
@@ -236,6 +244,7 @@ class ChatRepository {
         recieverUserName: recieverUserData?.name,
         senderUsername: senderUser.name,
         isGroupChat: isGroupChat,
+        messageReply: messageReply
       );
     } catch (e) {
       showSnackBar(context: context, content: e.toString());
@@ -250,12 +259,13 @@ class ChatRepository {
     required ProviderRef ref,
     required MessageEnum messageEnum,
     required bool isGroupChat,
+    required MessageReply? messageReply
   }) async {
     try {
       var timeSent = DateTime.now();
       var messageId = const Uuid().v1();
 
-      String imageUrl = await ref
+      String fileUrl = await ref
           .read(commonFirebaseStorageRepositoryProvider)
           .storeFileToFirebase(
             'chat/${messageEnum.type}/${senderUserData.uid}/$recieverUserId/$messageId',
@@ -281,9 +291,6 @@ class ChatRepository {
         case MessageEnum.audio:
           contactMsg = '🎵 Audio';
           break;
-        case MessageEnum.gif:
-          contactMsg = 'GIF';
-          break;
         default:
           contactMsg = 'GIF';
       }
@@ -298,7 +305,7 @@ class ChatRepository {
 
       _saveMessageToMessageSubcollection(
         recieverUserId: recieverUserId,
-        text: imageUrl,
+        text: fileUrl,
         timeSent: timeSent,
         messageId: messageId,
         username: senderUserData.name,
@@ -306,6 +313,7 @@ class ChatRepository {
         recieverUserName: recieverUserData?.name,
         senderUsername: senderUserData.name,
         isGroupChat: isGroupChat,
+        messageReply: messageReply
       );
     } catch (e) {
       showSnackBar(context: context, content: e.toString());
@@ -318,6 +326,7 @@ class ChatRepository {
     required String recieverUserId,
     required UserModel senderUser,
     required bool isGroupChat,
+    required MessageReply? messageReply
   }) async {
     try {
       var timeSent = DateTime.now();
@@ -350,6 +359,7 @@ class ChatRepository {
         recieverUserName: recieverUserData?.name,
         senderUsername: senderUser.name,
         isGroupChat: isGroupChat,
+        messageReply: messageReply
       );
     } catch (e) {
       showSnackBar(context: context, content: e.toString());

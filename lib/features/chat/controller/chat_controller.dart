@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wechat/common/enums/message_enum.dart';
+import 'package:wechat/common/provider/message_reply_provider.dart';
 import 'package:wechat/features/auth/controller/auth_controller.dart';
 import 'package:wechat/features/chat/repositories/chat_repository.dart';
 import 'package:wechat/models/chat_contact_model.dart';
@@ -38,6 +39,7 @@ class ChatController {
     String recieverUserId,
     bool isGroupChat,
   ) {
+    final messageReply = ref.read(messageReplyProvider);
     ref.read(userDataAuthProvider).whenData(
           (value) => chatRepository.sendTextMessage(
             context: context,
@@ -45,6 +47,7 @@ class ChatController {
             recieverUserId: recieverUserId,
             senderUser: value!,
             isGroupChat: isGroupChat,
+            messageReply: messageReply
           ),
         );
   }
@@ -56,6 +59,7 @@ class ChatController {
     MessageEnum messageEnum,
     bool isGroupChat,
   ) {
+    final messageReply = ref.read(messageReplyProvider);
     ref.read(userDataAuthProvider).whenData(
           (value) => chatRepository.sendFileMessage(
             context: context,
@@ -65,6 +69,7 @@ class ChatController {
             messageEnum: messageEnum,
             ref: ref,
             isGroupChat: isGroupChat,
+            messageReply: messageReply
           ),
         );
   }
@@ -75,6 +80,7 @@ class ChatController {
     String recieverUserId,
     bool isGroupChat,
   ) {
+    final messageReply = ref.read(messageReplyProvider);
     int gifUrlPartIndex = gifUrl.lastIndexOf('-') + 1;
     String gifUrlPart = gifUrl.substring(gifUrlPartIndex);
     String newgifUrl = 'https://i.giphy.com/media/$gifUrlPart/200.gif';
@@ -85,6 +91,7 @@ class ChatController {
             recieverUserId: recieverUserId,
             senderUser: value!,
             isGroupChat: isGroupChat,
+            messageReply: messageReply
           ),
         );
   }
