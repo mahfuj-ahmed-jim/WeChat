@@ -1,11 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_contacts/contact.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wechat/features/select_contact/repository/select_contact_repository.dart';
 
 final getContactsProvider = FutureProvider((ref) {
   final selectContactRepository = ref.watch(selectContactsRepositoryProvider);
   return selectContactRepository.getContacts();
+});
+
+final getSelectContactProvider = FutureProvider((ref) {
+  final selectContactRepository = ref.watch(selectContactsRepositoryProvider);
+  return selectContactRepository.selectContact();
 });
 
 final selectContactControllerProvider = Provider((ref) {
@@ -23,10 +26,6 @@ class SelectContactController {
     required this.ref,
     required this.selectContactRepository,
   });
-
-  void selectContact(Contact selectedContact, BuildContext context) {
-    selectContactRepository.selectContact(selectedContact, context);
-  }
 
   Future<String?> checkSavedUser(String userPhoneNumber) {
     return selectContactRepository.checkSavedUser(userPhoneNumber);

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/contact.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wechat/common/utils/colors.dart';
 import 'package:wechat/common/widgets/error.dart';
 import 'package:wechat/common/widgets/loader.dart';
 import 'package:wechat/features/select_contact/controller/select_contacts_controller.dart';
@@ -8,13 +8,6 @@ import 'package:wechat/features/select_contact/controller/select_contacts_contro
 class SelectContactsScreen extends ConsumerWidget {
   static const String routeName = '/select-contact';
   const SelectContactsScreen({Key? key}) : super(key: key);
-
-  void selectContact(
-      WidgetRef ref, Contact selectedContact, BuildContext context) {
-    ref
-        .read(selectContactControllerProvider)
-        .selectContact(selectedContact, context);
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,32 +29,62 @@ class SelectContactsScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: ref.watch(getContactsProvider).when(
+      body: ref.watch(getSelectContactProvider).when(
             data: (contactList) => ListView.builder(
-                itemCount: contactList.length,
-                itemBuilder: (context, index) {
-                  final contact = contactList[index];
-                  return InkWell(
-                    onTap: () => selectContact(ref, contact, context),
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: ListTile(
-                        title: Text(
-                          contact.displayName,
-                          style: const TextStyle(
-                            fontSize: 18,
+              shrinkWrap: true,
+              itemCount: contactList.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: index == 0
+                      ? const EdgeInsets.only(top: 10)
+                      : EdgeInsets.zero,
+                  child: Column(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          /*Navigator.pushNamed(
+                            context,
+                            MobileChatScreen.routeName,
+                            arguments: {
+                              'name': chatContactData[index].name,
+                              'uid': chatContactData[index].contactId,
+                              'isGroupChat': false,
+                              'profilePic': chatContactData[index].profilePic,
+                            },
+                          );*/
+                        },
+                        child: ListTile(
+                          title: Text(
+                            contactList[index].name,
+                            maxLines: 1,
+                            style: const TextStyle(
+                                overflow: TextOverflow.ellipsis, fontSize: 18),
+                          ),
+                          subtitle: Padding(
+                            padding: const EdgeInsets.only(top: 6.0),
+                            child: Text(
+                              maxLines: 1,
+                              contactList[index].status,
+                              style: const TextStyle(
+                                  color: Colors.grey,
+                                  overflow: TextOverflow.ellipsis,
+                                  fontSize: 14),
+                            ),
+                          ),
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(
+                              contactList[index].profilePic,
+                            ),
+                            radius: 30,
                           ),
                         ),
-                        leading: contact.photo == null
-                            ? null
-                            : CircleAvatar(
-                                backgroundImage: MemoryImage(contact.photo!),
-                                radius: 30,
-                              ),
                       ),
-                    ),
-                  );
-                }),
+                      const Divider(color: dividerColor, indent: 85)
+                    ],
+                  ),
+                );
+              },
+            ),
             error: (err, trace) => ErrorScreen(error: err.toString()),
             loading: () => const Loader(),
           ),

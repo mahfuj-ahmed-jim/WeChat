@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wechat/common/utils/colors.dart';
+import 'package:wechat/common/utils/utils.dart';
 import 'package:wechat/features/auth/controller/auth_controller.dart';
 import 'package:wechat/features/chat/widgets/conversation_list.dart';
 import 'package:wechat/features/select_contact/screens/select_contacts_screen.dart';
@@ -15,18 +18,35 @@ class MobileLayoutScreen extends ConsumerStatefulWidget {
 class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
     with WidgetsBindingObserver, TickerProviderStateMixin {
   late TabController tabBarController;
+  int index = 0;
   @override
   void initState() {
     super.initState();
     tabBarController = TabController(length: 3, vsync: this);
     WidgetsBinding.instance.addObserver(this);
     ref.read(authControllerProvider).setUserState(true); // initially set online
+    tabBarController.addListener(() {
+      setState(() {
+        index = tabBarController.index;
+      });
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
     WidgetsBinding.instance.removeObserver(this);
+  }
+
+  void statusPage() async {
+    File? pickedImage = await pickImageFromGallery(context);
+    if (pickedImage != null) {
+      /*Navigator.pushNamed(
+        context,
+        ConfirmStatusScreen.routeName,
+        arguments: pickedImage,
+      );*/
+    }
   }
 
   @override
@@ -64,8 +84,7 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
           actions: [
             IconButton(
               icon: const Icon(Icons.search, color: Colors.white),
-              onPressed: () {
-              },
+              onPressed: () {},
             ),
             PopupMenuButton(
               icon: const Icon(
@@ -118,23 +137,19 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            /*if (tabBarController.index == 0) {
+            if (tabBarController.index == 0) {
               Navigator.pushNamed(context, SelectContactsScreen.routeName);
             } else {
-              File? pickedImage = await pickImageFromGallery(context);
-              if (pickedImage != null) {
-                Navigator.pushNamed(
-                  context,
-                  ConfirmStatusScreen.routeName,
-                  arguments: pickedImage,
-                );
-              }
-            }*/
-            Navigator.pushNamed(context, SelectContactsScreen.routeName);
+              statusPage();
+            }
           },
           backgroundColor: tabColor,
-          child: const Icon(
-            Icons.comment,
+          child: Icon(
+            index == 0
+                ? Icons.comment
+                : index == 1
+                    ? Icons.camera_alt_rounded
+                    : Icons.call,
             color: Colors.white,
           ),
         ),
