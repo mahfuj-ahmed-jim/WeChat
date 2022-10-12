@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wechat/common/enums/message_enum.dart';
 import 'package:wechat/common/provider/message_reply_provider.dart';
 import 'package:wechat/features/chat/widgets/display_message.dart';
 
@@ -15,22 +16,25 @@ class MessageReplyPreview extends ConsumerWidget {
     final messageReply = ref.watch(messageReplyProvider);
 
     return Container(
-      width: 350,
-      padding: const EdgeInsets.all(8),
-      decoration: const BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.only(
+      width: MediaQuery.of(context).size.width,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.5),
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(12),
           topRight: Radius.circular(12),
         ),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Expanded(
                 child: Text(
-                  messageReply!.isMe ? 'Me' : 'Opposite',
+                  messageReply!.isMe
+                      ? 'Replying to yourself'
+                      : 'Replying to them',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
@@ -45,10 +49,24 @@ class MessageReplyPreview extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          DisplayMessage(
-            message: messageReply.message,
-            type: messageReply.messageEnum,
+          const SizedBox(height: 5),
+          ConstrainedBox(
+            constraints: BoxConstraints(
+                maxWidth: messageReply.messageEnum == MessageEnum.text
+                    ? MediaQuery.of(context).size.width
+                    : 180,
+                minWidth: 60,
+                maxHeight: messageReply.messageEnum == MessageEnum.text
+                    ? MediaQuery.of(context).size.height
+                    : 120),
+            child: Opacity(
+              opacity: 0.7,
+              child: DisplayMessage(
+                message: messageReply.message,
+                type: messageReply.messageEnum,
+                isReply: true,
+              ),
+            ),
           ),
         ],
       ),

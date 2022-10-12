@@ -3,30 +3,31 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wechat/common/enums/message_enum.dart';
 import 'package:wechat/common/provider/message_reply_provider.dart';
 import 'package:wechat/common/repositories/common_firebase_storage_repository.dart';
 import 'package:wechat/common/utils/utils.dart';
+import 'package:wechat/features/select_contact/controller/select_contacts_controller.dart';
 import 'package:wechat/models/chat_contact_model.dart';
 import 'package:wechat/models/message_model.dart';
 import 'package:wechat/models/user_model.dart';
 
 final chatRepositoryProvider = Provider(
   (ref) => ChatRepository(
-    firestore: FirebaseFirestore.instance,
-    auth: FirebaseAuth.instance,
-  ),
+      firestore: FirebaseFirestore.instance,
+      auth: FirebaseAuth.instance,
+      ref: ref),
 );
 
 class ChatRepository {
   final FirebaseFirestore firestore;
   final FirebaseAuth auth;
-  ChatRepository({
-    required this.firestore,
-    required this.auth,
-  });
+  final ProviderRef ref;
+  ChatRepository(
+      {required this.firestore, required this.auth, required this.ref});
 
   Stream<List<ChatContact>> getChatContacts() {
     return firestore
@@ -45,17 +46,46 @@ class ChatRepository {
             .get();
         var user = UserModel.fromMap(userData.data()!);
 
-        contacts.add(
-          ChatContact(
-              name: user.name,
-              phoneNumber: user.phoneNumber,
-              profilePic: user.profilePic,
-              contactId: chatContact.contactId,
-              timeSent: chatContact.timeSent,
-              lastMessage: chatContact.lastMessage,
-              isMe: chatContact.isMe,
-              unseenMessages: chatContact.unseenMessages),
-        );
+        List<Contact> phoneContact = [];
+        bool isFound = false;
+
+        ref.watch(getContactsProvider).whenData((value) {
+          phoneContact = value;
+        });
+
+        for (var contactDocs in phoneContact) {
+          for (var number in contactDocs.phones) {
+            if (number.number.replaceAll(' ', '').replaceAll('-', '') ==
+                user.phoneNumber) {
+              contacts.add(
+                ChatContact(
+                    name: contactDocs.displayName,
+                    phoneNumber: user.phoneNumber,
+                    profilePic: user.profilePic,
+                    contactId: chatContact.contactId,
+                    timeSent: chatContact.timeSent,
+                    lastMessage: chatContact.lastMessage,
+                    isMe: chatContact.isMe,
+                    unseenMessages: chatContact.unseenMessages),
+              );
+              isFound = true;
+              break;
+            }
+          }
+        }
+        if (!isFound) {
+          contacts.add(
+            ChatContact(
+                name: user.phoneNumber,
+                phoneNumber: user.phoneNumber,
+                profilePic: user.profilePic,
+                contactId: chatContact.contactId,
+                timeSent: chatContact.timeSent,
+                lastMessage: chatContact.lastMessage,
+                isMe: chatContact.isMe,
+                unseenMessages: chatContact.unseenMessages),
+          );
+        }
       }
       return contacts;
     });
@@ -205,14 +235,13 @@ class ChatRepository {
     }
   }
 
-  void sendTextMessage({
-    required BuildContext context,
-    required String text,
-    required String recieverUserId,
-    required UserModel senderUser,
-    required bool isGroupChat,
-    required MessageReply? messageReply
-  }) async {
+  void sendTextMessage(
+      {required BuildContext context,
+      required String text,
+      required String recieverUserId,
+      required UserModel senderUser,
+      required bool isGroupChat,
+      required MessageReply? messageReply}) async {
     try {
       var timeSent = DateTime.now();
       UserModel? recieverUserData;
@@ -235,32 +264,30 @@ class ChatRepository {
       );
 
       _saveMessageToMessageSubcollection(
-        recieverUserId: recieverUserId,
-        text: text,
-        timeSent: timeSent,
-        messageType: MessageEnum.text,
-        messageId: messageId,
-        username: senderUser.name,
-        recieverUserName: recieverUserData?.name,
-        senderUsername: senderUser.name,
-        isGroupChat: isGroupChat,
-        messageReply: messageReply
-      );
+          recieverUserId: recieverUserId,
+          text: text,
+          timeSent: timeSent,
+          messageType: MessageEnum.text,
+          messageId: messageId,
+          username: senderUser.name,
+          recieverUserName: recieverUserData?.name,
+          senderUsername: senderUser.name,
+          isGroupChat: isGroupChat,
+          messageReply: messageReply);
     } catch (e) {
       showSnackBar(context: context, content: e.toString());
     }
   }
 
-  void sendFileMessage({
-    required BuildContext context,
-    required File file,
-    required String recieverUserId,
-    required UserModel senderUserData,
-    required ProviderRef ref,
-    required MessageEnum messageEnum,
-    required bool isGroupChat,
-    required MessageReply? messageReply
-  }) async {
+  void sendFileMessage(
+      {required BuildContext context,
+      required File file,
+      required String recieverUserId,
+      required UserModel senderUserData,
+      required ProviderRef ref,
+      required MessageEnum messageEnum,
+      required bool isGroupChat,
+      required MessageReply? messageReply}) async {
     try {
       var timeSent = DateTime.now();
       var messageId = const Uuid().v1();
@@ -304,30 +331,28 @@ class ChatRepository {
       );
 
       _saveMessageToMessageSubcollection(
-        recieverUserId: recieverUserId,
-        text: fileUrl,
-        timeSent: timeSent,
-        messageId: messageId,
-        username: senderUserData.name,
-        messageType: messageEnum,
-        recieverUserName: recieverUserData?.name,
-        senderUsername: senderUserData.name,
-        isGroupChat: isGroupChat,
-        messageReply: messageReply
-      );
+          recieverUserId: recieverUserId,
+          text: fileUrl,
+          timeSent: timeSent,
+          messageId: messageId,
+          username: senderUserData.name,
+          messageType: messageEnum,
+          recieverUserName: recieverUserData?.name,
+          senderUsername: senderUserData.name,
+          isGroupChat: isGroupChat,
+          messageReply: messageReply);
     } catch (e) {
       showSnackBar(context: context, content: e.toString());
     }
   }
 
-  void sendGIFMessage({
-    required BuildContext context,
-    required String gifUrl,
-    required String recieverUserId,
-    required UserModel senderUser,
-    required bool isGroupChat,
-    required MessageReply? messageReply
-  }) async {
+  void sendGIFMessage(
+      {required BuildContext context,
+      required String gifUrl,
+      required String recieverUserId,
+      required UserModel senderUser,
+      required bool isGroupChat,
+      required MessageReply? messageReply}) async {
     try {
       var timeSent = DateTime.now();
       UserModel? recieverUserData;
@@ -350,17 +375,16 @@ class ChatRepository {
       );
 
       _saveMessageToMessageSubcollection(
-        recieverUserId: recieverUserId,
-        text: gifUrl,
-        timeSent: timeSent,
-        messageType: MessageEnum.gif,
-        messageId: messageId,
-        username: senderUser.name,
-        recieverUserName: recieverUserData?.name,
-        senderUsername: senderUser.name,
-        isGroupChat: isGroupChat,
-        messageReply: messageReply
-      );
+          recieverUserId: recieverUserId,
+          text: gifUrl,
+          timeSent: timeSent,
+          messageType: MessageEnum.gif,
+          messageId: messageId,
+          username: senderUser.name,
+          recieverUserName: recieverUserData?.name,
+          senderUsername: senderUser.name,
+          isGroupChat: isGroupChat,
+          messageReply: messageReply);
     } catch (e) {
       showSnackBar(context: context, content: e.toString());
     }

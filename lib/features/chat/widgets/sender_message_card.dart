@@ -76,6 +76,7 @@ class SenderMessageCard extends StatelessWidget {
                           child: DisplayMessage(
                             message: repliedText,
                             type: repliedMessageType,
+                            isReply: true,
                           ),
                         ),
                       ),
@@ -132,6 +133,7 @@ class SenderMessageCard extends StatelessWidget {
                           child: DisplayMessage(
                             message: message,
                             type: type,
+                            isReply: true,
                           ),
                         ),
                         Positioned(

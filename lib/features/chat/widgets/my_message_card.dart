@@ -53,8 +53,12 @@ class MyMessageCard extends StatelessWidget {
                   ),
                 ),
                 ConstrainedBox(
-                    constraints: const BoxConstraints(
-                        maxWidth: 180, minWidth: 60, maxHeight: 120),
+                    constraints: BoxConstraints(
+                        maxWidth: repliedMessageType == MessageEnum.text
+                            ? MediaQuery.of(context).size.width - 45
+                            : 180,
+                        minWidth: 60,
+                        maxHeight: 120),
                     child: Card(
                       elevation: 1,
                       shape: const RoundedRectangleBorder(
@@ -68,8 +72,8 @@ class MyMessageCard extends StatelessWidget {
                               bottomRight: Radius.circular(8),
                               bottomLeft: Radius.circular(8))),
                       color: blackColor,
-                      margin:
-                          const EdgeInsets.only(left: 15, right: 15, bottom: 0, top: 5),
+                      margin: const EdgeInsets.only(
+                          left: 15, right: 15, bottom: 0, top: 5),
                       child: Padding(
                         padding: repliedMessageType == MessageEnum.text
                             ? const EdgeInsets.all(10.0)
@@ -79,6 +83,7 @@ class MyMessageCard extends StatelessWidget {
                           child: DisplayMessage(
                             message: repliedText,
                             type: repliedMessageType,
+                            isReply: true,
                           ),
                         ),
                       ),
@@ -147,6 +152,7 @@ class MyMessageCard extends StatelessWidget {
                           child: DisplayMessage(
                             message: message,
                             type: type,
+                            isReply: false,
                           ),
                         ),
                         Positioned(

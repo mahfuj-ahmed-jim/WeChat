@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +9,13 @@ import 'package:wechat/features/chat/widgets/video_player.dart';
 class DisplayMessage extends StatefulWidget {
   final String message;
   final MessageEnum type;
+  final isReply;
 
   const DisplayMessage({
     Key? key,
     required this.message,
-    required this.type,
+    required this.type, 
+    required this.isReply,
   }) : super(key: key);
 
   @override
@@ -26,6 +30,8 @@ class _DisplayMessageState extends State<DisplayMessage> {
     return widget.type == MessageEnum.text
         ? Text(
             widget.message,
+            overflow: TextOverflow.ellipsis,
+            maxLines: widget.isReply? 3 : widget.message.length,
             style: const TextStyle(
               fontSize: 16,
             ),

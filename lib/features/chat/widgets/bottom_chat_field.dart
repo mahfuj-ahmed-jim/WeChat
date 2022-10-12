@@ -51,6 +51,10 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
     isRecorderInit = true;
   }
 
+  void turnOffReply(WidgetRef ref) {
+    ref.read(messageReplyProvider.state).update((state) => null);
+  }
+
   void sendTextMessage() async {
     ref.read(chatControllerProvider).sendTextMessage(
           context,
@@ -61,6 +65,7 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
     setState(() {
       _messageController.text = '';
       isShowSendButton = false;
+      turnOffReply(ref);
     });
   }
 
@@ -75,6 +80,7 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
           messageEnum,
           widget.isGroupChat,
         );
+    turnOffReply(ref);
   }
 
   void sendVoiceMessage() async {
@@ -86,12 +92,12 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
     if (isRecording) {
       await _soundRecoder!.stopRecorder();
       sendFileMessage(File(path), MessageEnum.audio);
+      turnOffReply(ref);
     } else {
       await _soundRecoder!.startRecorder(
         toFile: path,
       );
     }
-
     setState(() {
       isRecording = !isRecording;
     });
@@ -121,6 +127,7 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
             widget.recieverUserId,
             widget.isGroupChat,
           );
+      turnOffReply(ref);
     }
   }
 
