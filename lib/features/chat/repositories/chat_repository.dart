@@ -1,9 +1,7 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wechat/common/enums/message_enum.dart';
@@ -46,45 +44,30 @@ class ChatRepository {
             .get();
         var user = UserModel.fromMap(userData.data()!);
 
-        List<Contact> phoneContact = [];
-        bool isFound = false;
+        String? name = await ref
+            .read(selectContactControllerProvider)
+            .checkSavedUser(user.phoneNumber);
 
-        ref.watch(getContactsProvider).whenData((value) {
-          phoneContact = value;
-        });
-
-        for (var contactDocs in phoneContact) {
-          for (var number in contactDocs.phones) {
-            if (number.number.replaceAll(' ', '').replaceAll('-', '') ==
-                user.phoneNumber) {
-              contacts.add(
-                ChatContact(
-                    name: contactDocs.displayName,
-                    phoneNumber: user.phoneNumber,
-                    profilePic: user.profilePic,
-                    contactId: chatContact.contactId,
-                    timeSent: chatContact.timeSent,
-                    lastMessage: chatContact.lastMessage,
-                    isMe: chatContact.isMe,
-                    unseenMessages: chatContact.unseenMessages),
-              );
-              isFound = true;
-              break;
-            }
-          }
-        }
-        if (!isFound) {
-          contacts.add(
-            ChatContact(
-                name: user.phoneNumber,
-                phoneNumber: user.phoneNumber,
-                profilePic: user.profilePic,
-                contactId: chatContact.contactId,
-                timeSent: chatContact.timeSent,
-                lastMessage: chatContact.lastMessage,
-                isMe: chatContact.isMe,
-                unseenMessages: chatContact.unseenMessages),
-          );
+        if (name != null) {
+          contacts.add(ChatContact(
+              name: name,
+              phoneNumber: user.phoneNumber,
+              profilePic: user.profilePic,
+              contactId: chatContact.contactId,
+              timeSent: chatContact.timeSent,
+              lastMessage: chatContact.lastMessage,
+              isMe: chatContact.isMe,
+              unseenMessages: chatContact.unseenMessages));
+        } else {
+          contacts.add(ChatContact(
+              name: user.phoneNumber,
+              phoneNumber: user.phoneNumber,
+              profilePic: user.profilePic,
+              contactId: chatContact.contactId,
+              timeSent: chatContact.timeSent,
+              lastMessage: chatContact.lastMessage,
+              isMe: chatContact.isMe,
+              unseenMessages: chatContact.unseenMessages));
         }
       }
       return contacts;

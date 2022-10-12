@@ -27,4 +27,8 @@ class SelectContactController {
   void selectContact(Contact selectedContact, BuildContext context) {
     selectContactRepository.selectContact(selectedContact, context);
   }
+
+  Future<String?> checkSavedUser(String userPhoneNumber) {
+    return selectContactRepository.checkSavedUser(userPhoneNumber);
+  }
 }

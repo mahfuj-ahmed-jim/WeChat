@@ -31,6 +31,20 @@ class SelectContactRepository {
     return contacts;
   }
 
+  Future<String?> checkSavedUser(String userPhoneNumber) async {
+    String? name;
+    List<Contact> mobileContacts = await getContacts();
+    for (var contact in mobileContacts) {
+      for (var number in contact.phones) {
+        if (userPhoneNumber ==
+            number.number.replaceAll('-', '').replaceAll(' ', '')) {
+          name = contact.displayName;
+        }
+      }
+    }
+    return name;
+  }
+
   void selectContact(Contact selectedContact, BuildContext context) async {
     try {
       var userCollection = await firestore.collection('users').get();
