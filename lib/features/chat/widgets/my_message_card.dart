@@ -176,12 +176,14 @@ class MyMessageCard extends StatelessWidget {
                                 width: 5,
                               ),
                               Icon(
-                                Icons.done_all,
+                                isSeen ? Icons.done_all : Icons.done,
                                 size: 20,
-                                color: type == MessageEnum.text ||
-                                        type == MessageEnum.audio
-                                    ? Colors.white60
-                                    : Colors.white,
+                                color: isSeen
+                                    ? Colors.blue
+                                    : type == MessageEnum.text ||
+                                            type == MessageEnum.audio
+                                        ? Colors.white60
+                                        : Colors.white,
                               ),
                             ],
                           ),

@@ -396,6 +396,7 @@ class ChatRepository {
     String messageId,
   ) async {
     try {
+      // users -> sender id -> reciever id -> messages -> message id -> store message
       await firestore
           .collection('users')
           .doc(auth.currentUser!.uid)
@@ -405,6 +406,7 @@ class ChatRepository {
           .doc(messageId)
           .update({'isSeen': true});
 
+      // users -> eciever id  -> sender id -> messages -> message id -> store message
       await firestore
           .collection('users')
           .doc(recieverUserId)
