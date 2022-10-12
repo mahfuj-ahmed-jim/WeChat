@@ -6,6 +6,7 @@ import 'package:wechat/common/utils/colors.dart';
 import 'package:wechat/features/chat/widgets/display_message.dart';
 
 class MyMessageCard extends StatelessWidget {
+  final String name;
   final String message;
   final String date;
   final MessageEnum type;
@@ -19,6 +20,7 @@ class MyMessageCard extends StatelessWidget {
 
   const MyMessageCard({
     Key? key,
+    required this.name,
     required this.message,
     required this.date,
     required this.type,
@@ -48,7 +50,7 @@ class MyMessageCard extends StatelessWidget {
                   child: Text(
                     repliedTo == FirebaseAuth.instance.currentUser!.uid
                         ? '← You replied to yourself'
-                        : '← You replied to them',
+                        : '← You replied to $name',
                     style: const TextStyle(color: Colors.grey, fontSize: 13),
                   ),
                 ),

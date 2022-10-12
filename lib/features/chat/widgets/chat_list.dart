@@ -13,10 +13,12 @@ import 'package:wechat/models/message_model.dart';
 import 'sender_message_card.dart';
 
 class ChatList extends ConsumerStatefulWidget {
+  final String receiverName;
   final String recieverUserId;
   final bool isGroupChat;
   const ChatList({
     Key? key,
+    required this.receiverName,
     required this.recieverUserId,
     required this.isGroupChat,
   }) : super(key: key);
@@ -83,6 +85,7 @@ class _ChatListState extends ConsumerState<ChatList> {
                         ? const EdgeInsets.only(top: 10)
                         : EdgeInsets.zero,
                     child: MyMessageCard(
+                        name: widget.receiverName,
                         message: messageList[index].text,
                         date: timeSent,
                         type: messageList[index].type,
@@ -112,6 +115,7 @@ class _ChatListState extends ConsumerState<ChatList> {
                       ? const EdgeInsets.only(top: 10)
                       : EdgeInsets.zero,
                   child: SenderMessageCard(
+                    name: widget.receiverName,
                     message: messageList[index].text,
                     date: timeSent,
                     type: messageList[index].type,
@@ -119,15 +123,15 @@ class _ChatListState extends ConsumerState<ChatList> {
                     repliedMessageType: messageList[index].repliedMessageType,
                     repliedText: messageList[index].repliedMessage,
                     previousMessage: index != (snapshot.data!.length) - 1 &&
-                                messageList[index + 1].senderId !=
-                                    FirebaseAuth.instance.currentUser!.uid
-                            ? true
-                            : false,
-                        nextMessage: index != 0 &&
-                                messageList[index - 1].senderId !=
-                                    FirebaseAuth.instance.currentUser!.uid
-                            ? true
-                            : false,
+                            messageList[index + 1].senderId !=
+                                FirebaseAuth.instance.currentUser!.uid
+                        ? true
+                        : false,
+                    nextMessage: index != 0 &&
+                            messageList[index - 1].senderId !=
+                                FirebaseAuth.instance.currentUser!.uid
+                        ? true
+                        : false,
                     onRightSwipe: (() => onMessageSwipe(messageList[index].text,
                         false, messageList[index].type)),
                   ),

@@ -14,10 +14,12 @@ import 'package:wechat/features/chat/controller/chat_controller.dart';
 import 'package:wechat/features/chat/widgets/message_reply_preview.dart';
 
 class BottomChatField extends ConsumerStatefulWidget {
+  final String name;
   final String recieverUserId;
   final bool isGroupChat;
   const BottomChatField({
     Key? key,
+    required this.name,
     required this.recieverUserId,
     required this.isGroupChat,
   }) : super(key: key);
@@ -170,7 +172,9 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
     final isShowMessageReply = messageReply != null;
     return Column(
       children: [
-        isShowMessageReply ? const MessageReplyPreview() : const SizedBox(),
+        isShowMessageReply
+            ? MessageReplyPreview(widget.name)
+            : const SizedBox(),
         Row(
           children: [
             Expanded(

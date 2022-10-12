@@ -8,6 +8,7 @@ import 'package:wechat/features/chat/widgets/display_message.dart';
 class SenderMessageCard extends StatelessWidget {
   const SenderMessageCard({
     Key? key,
+    required this.name,
     required this.message,
     required this.date,
     required this.type,
@@ -18,6 +19,7 @@ class SenderMessageCard extends StatelessWidget {
     required this.onRightSwipe,
     required this.nextMessage,
   }) : super(key: key);
+  final String name;
   final String message;
   final String date;
   final MessageEnum type;
@@ -41,7 +43,7 @@ class SenderMessageCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 15, top: 5),
+                  padding: const EdgeInsets.only(left: 15, top: 5),
                   child: Text(
                     repliedTo == FirebaseAuth.instance.currentUser!.uid
                         ? '← They replied to you'

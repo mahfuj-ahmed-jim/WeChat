@@ -5,7 +5,8 @@ import 'package:wechat/common/provider/message_reply_provider.dart';
 import 'package:wechat/features/chat/widgets/display_message.dart';
 
 class MessageReplyPreview extends ConsumerWidget {
-  const MessageReplyPreview({Key? key}) : super(key: key);
+  final String name;
+  const MessageReplyPreview(this.name, {Key? key}) : super(key: key);
 
   void cancelReply(WidgetRef ref) {
     ref.read(messageReplyProvider.state).update((state) => null);
@@ -34,7 +35,7 @@ class MessageReplyPreview extends ConsumerWidget {
                 child: Text(
                   messageReply!.isMe
                       ? 'Replying to yourself'
-                      : 'Replying to them',
+                      : 'Replying to $name',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
