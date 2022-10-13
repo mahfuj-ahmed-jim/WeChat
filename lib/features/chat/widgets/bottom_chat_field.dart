@@ -261,11 +261,12 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
                 right: 2,
                 left: 2,
               ),
-              child: CircleAvatar(
-                backgroundColor: const Color(0xFF128C7E),
-                radius: 25,
-                child: GestureDetector(
-                  // ignore: sort_child_properties_last
+              child: GestureDetector(
+                onTap: (() =>
+                    isShowSendButton ? sendTextMessage() : sendVoiceMessage()),
+                child: CircleAvatar(
+                  backgroundColor: tabColor,
+                  radius: 25,
                   child: Icon(
                     isShowSendButton
                         ? Icons.send
@@ -274,9 +275,6 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
                             : Icons.mic,
                     color: Colors.white,
                   ),
-                  onTap: (() => isShowSendButton
-                      ? sendTextMessage()
-                      : sendVoiceMessage()),
                 ),
               ),
             ),

@@ -7,6 +7,8 @@ import 'package:wechat/common/utils/utils.dart';
 import 'package:wechat/features/auth/controller/auth_controller.dart';
 import 'package:wechat/features/chat/widgets/conversation_list.dart';
 import 'package:wechat/features/select_contact/screens/select_contacts_screen.dart';
+import 'package:wechat/features/status/screens/confirm_status_screen.dart';
+import 'package:wechat/features/status/screens/status_screen.dart';
 
 class MobileLayoutScreen extends ConsumerStatefulWidget {
   const MobileLayoutScreen({Key? key}) : super(key: key);
@@ -41,11 +43,12 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
   void statusPage() async {
     File? pickedImage = await pickImageFromGallery(context);
     if (pickedImage != null) {
-      /*Navigator.pushNamed(
+      // ignore: use_build_context_synchronously
+      Navigator.pushNamed(
         context,
         ConfirmStatusScreen.routeName,
         arguments: pickedImage,
-      );*/
+      );
     }
   }
 
@@ -130,8 +133,7 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
           controller: tabBarController,
           children: const [
             ConversationList(),
-            Text('Calls'),
-            //StatusContactsScreen(),
+            StatusScreen(),
             Text('Calls')
           ],
         ),

@@ -46,13 +46,12 @@ class SelectContactRepository {
   Future<List<UserModel>> selectContact() async {
     List<UserModel> userList = [];
     try {
-      var userCollection = await firestore.collection('users').get();
-
+      var userCollection = await firestore.collection('users').get(); // users list from firebase
       for (var document in userCollection.docs) {
-        var userData = UserModel.fromMap(document.data());
-        String? name = await checkSavedUser(userData.phoneNumber);
+        var userData = UserModel.fromMap(document.data()); // convert to userModel class
+        String? name = await checkSavedUser(userData.phoneNumber); // checking if exist in mobile contact or not
         if (name != null) {
-          userData.setName(name);
+          userData.setName(name); 
           userList.add(userData);
         }
       }
