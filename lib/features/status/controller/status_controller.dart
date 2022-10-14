@@ -31,7 +31,7 @@ class StatusController {
         context: context);
   }
 
-  Future<List<ContactStatus>> getStatus(BuildContext context) {
+  Stream<List<ContactStatus>> getStatus(BuildContext context) {
     return statusRepository.getStatus(context);
   }
 }

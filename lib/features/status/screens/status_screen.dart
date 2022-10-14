@@ -21,8 +21,8 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<ContactStatus>>(
-        future: ref.read(statusControllerProvider).getStatus(context),
+    return StreamBuilder<List<ContactStatus>>(
+        stream: ref.read(statusControllerProvider).getStatus(context),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Loader();
@@ -37,7 +37,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
                     : EdgeInsets.zero,
                 child: Column(
                   children: [
-                    InkWell(
+                    /*InkWell(
                       onTap: () {},
                       child: ListTile(
                         title: Text(
@@ -78,7 +78,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
                         ),
                       ),
                     ),
-                    const Divider(color: dividerColor, indent: 85)
+                    const Divider(color: dividerColor, indent: 85)*/
                   ],
                 ),
               );
