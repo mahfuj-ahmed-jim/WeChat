@@ -29,7 +29,7 @@ class StatusModel {
 
   factory StatusModel.fromMap(Map<String, dynamic> map) {
     return StatusModel(
-      url: map['photoUrl'] ?? '',
+      url: map['url'] ?? '',
       type: (map['type'] as String).toEnum(),
       caption: map['caption'] ?? '',
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt']),
