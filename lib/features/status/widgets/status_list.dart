@@ -24,7 +24,7 @@ class StatusList extends ConsumerWidget {
               InkWell(
                 onTap: () {
                   Navigator.pushNamed(context, StoryViewScreen.routeName,
-                      arguments: statusList[index].statusList);
+                      arguments: statusList[index]);
                 },
                 child: ListTile(
                   title: Text(
