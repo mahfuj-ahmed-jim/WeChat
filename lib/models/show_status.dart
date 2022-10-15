@@ -2,7 +2,7 @@ import 'package:wechat/models/status_model.dart';
 
 class ShowStatus {
   final String userId;
-  final String userName;
+  String userName;
   final String profilePic;
   bool isSeen = true;
   List<StatusModel> statusList = [];

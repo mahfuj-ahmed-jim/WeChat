@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wechat/common/utils/colors.dart';
 import 'package:wechat/common/widgets/error.dart';
 import 'package:wechat/common/widgets/loader.dart';
+import 'package:wechat/features/chat/screens/mobile_chat_screen.dart';
 import 'package:wechat/features/select_contact/controller/select_contacts_controller.dart';
 
 class SelectContactsScreen extends ConsumerWidget {
@@ -42,16 +43,16 @@ class SelectContactsScreen extends ConsumerWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          /*Navigator.pushNamed(
-                            context,
-                            MobileChatScreen.routeName,
-                            arguments: {
-                              'name': chatContactData[index].name,
-                              'uid': chatContactData[index].contactId,
-                              'isGroupChat': false,
-                              'profilePic': chatContactData[index].profilePic,
-                            },
-                          );*/
+                          Navigator.pushNamed(
+                          context,
+                          MobileChatScreen.routeName,
+                          arguments: {
+                            'name': contactList[index].name,
+                            'uid': contactList[index].uid,
+                            'isGroupChat': false,
+                            'profilePic': contactList[index].profilePic,
+                          },
+                        );
                         },
                         child: ListTile(
                           title: Text(

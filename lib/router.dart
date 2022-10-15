@@ -8,6 +8,8 @@ import 'package:wechat/features/auth/screens/user_information_screen.dart';
 import 'package:wechat/features/chat/screens/mobile_chat_screen.dart';
 import 'package:wechat/features/select_contact/screens/select_contacts_screen.dart';
 import 'package:wechat/features/status/screens/confirm_status_screen.dart';
+import 'package:wechat/features/status/screens/story_view_screen.dart';
+import 'package:wechat/models/status_model.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -29,6 +31,13 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case SelectContactsScreen.routeName:
       return MaterialPageRoute(
         builder: (context) => const SelectContactsScreen(),
+      );
+    case StoryViewScreen.routeName:
+      final statuses = settings.arguments as List<StatusModel>;
+      return MaterialPageRoute(
+        builder: (context) => StoryViewScreen(
+          statuses: statuses,
+        ),
       );
     case MobileChatScreen.routeName:
       final arguments = settings.arguments as Map<String, dynamic>;

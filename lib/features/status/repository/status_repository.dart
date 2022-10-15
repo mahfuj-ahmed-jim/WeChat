@@ -80,7 +80,8 @@ class StatusRepository {
             .read(selectContactControllerProvider)
             .checkSavedUser(userData.phoneNumber);
 
-        if (name != null && status.whoCanSee.contains(auth.currentUser!.uid)) {
+        if ((name != null && status.whoCanSee.contains(auth.currentUser!.uid) ||
+            userData.uid == auth.currentUser!.uid)) {
           bool found = false;
           for (int i = 0; i < statses.length; i++) {
             if (statses[i].userId == userData.uid) {
@@ -95,7 +96,7 @@ class StatusRepository {
           if (!found) {
             ShowStatus showStatus = ShowStatus(
                 userId: userData.uid,
-                userName: name,
+                userName: name ?? 'My Status',
                 profilePic: userData.profilePic);
             if (!status.seen.contains(auth.currentUser!.uid)) {
               showStatus.statusSeen(false);
