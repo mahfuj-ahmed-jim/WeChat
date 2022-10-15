@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wechat/common/enums/message_enum.dart';
 import 'package:wechat/features/status/repository/status_repository.dart';
-import 'package:wechat/models/contact_status.dart';
+import 'package:wechat/models/show_status.dart';
 
 final statusControllerProvider = Provider(((ref) {
   final statusRepository = ref.read(statusRepositoryProvider);
@@ -31,7 +31,7 @@ class StatusController {
         context: context);
   }
 
-  Stream<List<ContactStatus>> getStatus(BuildContext context) {
+  Stream<List<ShowStatus>> getStatus(BuildContext context) {
     return statusRepository.getStatus(context);
   }
 }

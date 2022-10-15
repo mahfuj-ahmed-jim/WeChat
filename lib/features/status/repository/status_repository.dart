@@ -8,8 +8,10 @@ import 'package:uuid/uuid.dart';
 import 'package:wechat/common/enums/message_enum.dart';
 import 'package:wechat/common/repositories/common_firebase_storage_repository.dart';
 import 'package:wechat/common/utils/utils.dart';
-import 'package:wechat/models/contact_status.dart';
+import 'package:wechat/features/select_contact/controller/select_contacts_controller.dart';
+import 'package:wechat/models/show_status.dart';
 import 'package:wechat/models/status_model.dart';
+import 'package:wechat/models/user_model.dart';
 
 final statusRepositoryProvider = Provider(((ref) => StatusRepository(
     firestore: FirebaseFirestore.instance,
@@ -38,25 +40,16 @@ class StatusRepository {
           .storeFileToFirebase('/status/$userId/${type.type}/$statusId', file);
 
       StatusModel status = StatusModel(
+          userId: userId,
           url: url,
           type: type,
           caption: caption,
           createdAt: DateTime.now(),
           statusId: statusId,
-          whoCanSee: whoCanSee);
+          whoCanSee: whoCanSee,
+          seen: []);
 
-      try {
-        await firestore.collection('status').doc(userId).set({
-          "statusList": FieldValue.arrayUnion([status])
-        });
-      } catch (e) {
-        List<StatusModel> list = [];
-        list.add(status);
-        await firestore
-            .collection('status')
-            .doc(userId)
-            .set(ContactStatus(statusList: list).toMap());
-      }
+      await firestore.collection('status').doc(statusId).set(status.toMap());
 
       Navigator.pop(context);
     } catch (e) {
@@ -64,59 +57,54 @@ class StatusRepository {
     }
   }
 
-  Stream<List<ContactStatus>> getStatus(BuildContext context) {
-    return firestore.collection('status').snapshots().asyncMap((event) async {
-      List<ContactStatus> statses = [];
+  Stream<List<ShowStatus>> getStatus(BuildContext context) {
+    return firestore
+        .collection('status')
+        .orderBy('createdAt')
+        .where(
+          'createdAt',
+          isGreaterThan: DateTime.now()
+              .subtract(const Duration(hours: 24))
+              .millisecondsSinceEpoch,
+        )
+        .snapshots()
+        .asyncMap((event) async {
+      List<ShowStatus> statses = [];
+      for (var document in event.docs) {
+        var status = StatusModel.fromMap(document.data());
+        var userDocuments =
+            await firestore.collection('users').doc(status.userId).get();
+        var userData = UserModel.fromMap(userDocuments.data()!);
 
-      for (var document in event.docs) {}
+        String? name = await ref
+            .read(selectContactControllerProvider)
+            .checkSavedUser(userData.phoneNumber);
 
-      /*try {
-        var userCollection = await firestore
-            .collection('users')
-            .get(); // users list from firebase
-        for (var document in userCollection.docs) {
-          var userData =
-              UserModel.fromMap(document.data()); // convert to userModel class
-          String? name = await ref
-              .read(selectContactControllerProvider)
-              .checkSavedUser(userData
-                  .phoneNumber); // checking if exist in mobile contact or not
-          if (name != null) {
-            try {
-              var snapShot = await firestore
-                  .collection('status')
-                  .doc('users')
-                  .collection(userData.uid)
-                  .orderBy('createdAt')
-                  .where('createdAt',
-                      isGreaterThan: DateTime.now()
-                          .subtract(const Duration(hours: 24))
-                          .millisecondsSinceEpoch)
-                  .get();
-              ContactStatus contactStatus = ContactStatus(
-                  uid: userData.uid,
-                  name: name,
-                  profilePic: userData.profilePic);
-              if (snapShot.docs.isNotEmpty) {
-                for (var tempStatus in snapShot.docs) {
-                  var status = StatusModel.fromMap(tempStatus.data());
-                  if (status.whoCanSee.contains(auth.currentUser!.uid)) {
-                    contactStatus.addStatusList(status);
-                  }
-                }
-                if (contactStatus.statusList.isNotEmpty) {
-                  statses.add(contactStatus);
-                }
+        if (name != null && status.whoCanSee.contains(auth.currentUser!.uid)) {
+          bool found = false;
+          for (int i = 0; i < statses.length; i++) {
+            if (statses[i].userId == userData.uid) {
+              statses[i].addStatus(status);
+              found = true;
+              if (!status.seen.contains(auth.currentUser!.uid)) {
+                statses[i].statusSeen(false);
               }
-            } catch (e) {
-              //
+              break;
             }
           }
+          if (!found) {
+            ShowStatus showStatus = ShowStatus(
+                userId: userData.uid,
+                userName: name,
+                profilePic: userData.profilePic);
+            if (!status.seen.contains(auth.currentUser!.uid)) {
+              showStatus.statusSeen(false);
+            }
+            showStatus.addStatus(status);
+            statses.add(showStatus);
+          }
         }
-      } catch (e) {
-        showSnackBar(context: context, content: e.toString());
-      }*/
-
+      }
       return statses;
     });
   }

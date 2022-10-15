@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:wechat/common/utils/colors.dart';
 import 'package:wechat/common/widgets/loader.dart';
 import 'package:wechat/features/status/controller/status_controller.dart';
-import 'package:wechat/models/contact_status.dart';
+import 'package:wechat/models/show_status.dart';
 
 class StatusScreen extends ConsumerStatefulWidget {
   const StatusScreen({super.key});
@@ -21,7 +21,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<ContactStatus>>(
+    return StreamBuilder<List<ShowStatus>>(
         stream: ref.read(statusControllerProvider).getStatus(context),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -37,11 +37,11 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
                     : EdgeInsets.zero,
                 child: Column(
                   children: [
-                    /*InkWell(
+                    InkWell(
                       onTap: () {},
                       child: ListTile(
                         title: Text(
-                          snapshot.data![index].name,
+                          snapshot.data![index].userName,
                           maxLines: 1,
                           style: const TextStyle(
                               overflow: TextOverflow.ellipsis, fontSize: 18),
@@ -62,7 +62,9 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
                           ),
                         ),
                         leading: CircleAvatar(
-                          backgroundColor: Colors.blueGrey,
+                          backgroundColor: snapshot.data![index].isSeen
+                              ? Colors.blueGrey
+                              : Colors.blue,
                           radius: 32,
                           child: CircleAvatar(
                             backgroundImage: NetworkImage(
@@ -78,7 +80,7 @@ class _StatusScreenState extends ConsumerState<StatusScreen> {
                         ),
                       ),
                     ),
-                    const Divider(color: dividerColor, indent: 85)*/
+                    const Divider(color: dividerColor, indent: 85)
                   ],
                 ),
               );
