@@ -116,6 +116,13 @@ class ChatRepository {
     String recieverUserId,
     bool isGroupChat,
   ) async {
+    var doc = (await firestore
+        .collection('users')
+        .doc(recieverUserId)
+        .collection('chats')
+        .doc(auth.currentUser!.uid)
+        .get());
+    int unseenMessages = doc.get('unseenMessages') + 1;
     // users -> reciever user id => chats -> current user id -> set data
     var recieverChatContact = ChatContact(
         name: senderUserData.name,
@@ -125,7 +132,7 @@ class ChatRepository {
         timeSent: timeSent,
         lastMessage: text,
         isMe: false,
-        unseenMessages: 0);
+        unseenMessages: unseenMessages);
     await firestore
         .collection('users')
         .doc(recieverUserId)
@@ -389,7 +396,7 @@ class ChatRepository {
           .doc(messageId)
           .update({'isSeen': true});
 
-      // users -> eciever id  -> sender id -> messages -> message id -> store message
+      // users -> reciever id  -> sender id -> messages -> message id -> store message
       await firestore
           .collection('users')
           .doc(recieverUserId)
@@ -398,6 +405,14 @@ class ChatRepository {
           .collection('messages')
           .doc(messageId)
           .update({'isSeen': true});
+
+      // update unseen messages
+      await firestore
+          .collection('users')
+          .doc(auth.currentUser!.uid)
+          .collection('chats')
+          .doc(recieverUserId)
+          .update({"unseenMessages": 0});
     } catch (e) {
       showSnackBar(context: context, content: e.toString());
     }

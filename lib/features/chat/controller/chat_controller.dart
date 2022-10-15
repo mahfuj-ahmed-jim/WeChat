@@ -42,13 +42,12 @@ class ChatController {
     final messageReply = ref.read(messageReplyProvider);
     ref.read(userDataAuthProvider).whenData(
           (value) => chatRepository.sendTextMessage(
-            context: context,
-            text: text,
-            recieverUserId: recieverUserId,
-            senderUser: value!,
-            isGroupChat: isGroupChat,
-            messageReply: messageReply
-          ),
+              context: context,
+              text: text,
+              recieverUserId: recieverUserId,
+              senderUser: value!,
+              isGroupChat: isGroupChat,
+              messageReply: messageReply),
         );
   }
 
@@ -62,15 +61,14 @@ class ChatController {
     final messageReply = ref.read(messageReplyProvider);
     ref.read(userDataAuthProvider).whenData(
           (value) => chatRepository.sendFileMessage(
-            context: context,
-            file: file,
-            recieverUserId: recieverUserId,
-            senderUserData: value!,
-            messageEnum: messageEnum,
-            ref: ref,
-            isGroupChat: isGroupChat,
-            messageReply: messageReply
-          ),
+              context: context,
+              file: file,
+              recieverUserId: recieverUserId,
+              senderUserData: value!,
+              messageEnum: messageEnum,
+              ref: ref,
+              isGroupChat: isGroupChat,
+              messageReply: messageReply),
         );
   }
 
@@ -86,13 +84,12 @@ class ChatController {
     String newgifUrl = 'https://i.giphy.com/media/$gifUrlPart/200.gif';
     ref.read(userDataAuthProvider).whenData(
           (value) => chatRepository.sendGIFMessage(
-            context: context,
-            gifUrl: newgifUrl,
-            recieverUserId: recieverUserId,
-            senderUser: value!,
-            isGroupChat: isGroupChat,
-            messageReply: messageReply
-          ),
+              context: context,
+              gifUrl: newgifUrl,
+              recieverUserId: recieverUserId,
+              senderUser: value!,
+              isGroupChat: isGroupChat,
+              messageReply: messageReply),
         );
   }
 
