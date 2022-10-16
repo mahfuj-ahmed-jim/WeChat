@@ -23,6 +23,7 @@ class StatusScreen extends ConsumerWidget {
           myStatus = [];
           for (var data in snapshot.data!) {
             if (data.userId == FirebaseAuth.instance.currentUser!.uid) {
+              data.userName = 'My status';
               myStatus.add(data);
             } else {
               if (data.isSeen) {
@@ -42,24 +43,24 @@ class StatusScreen extends ConsumerWidget {
                     : const SizedBox(),
                 unSeenList.isNotEmpty
                     ? const Padding(
-                      padding: EdgeInsets.only(top: 12),
-                      child: Text(
+                        padding: EdgeInsets.only(top: 12),
+                        child: Text(
                           '    Recent update',
                           style: TextStyle(color: Colors.grey, fontSize: 15),
                         ),
-                    )
+                      )
                     : const SizedBox(),
                 unSeenList.isNotEmpty
                     ? StatusList(false, unSeenList)
                     : const SizedBox(),
                 seenList.isNotEmpty
                     ? const Padding(
-                      padding: EdgeInsets.only(top: 12),
-                      child: Text(
+                        padding: EdgeInsets.only(top: 12),
+                        child: Text(
                           '    Viewed update',
                           style: TextStyle(color: Colors.grey, fontSize: 15),
                         ),
-                    )
+                      )
                     : const SizedBox(),
                 seenList.isNotEmpty
                     ? StatusList(true, seenList)

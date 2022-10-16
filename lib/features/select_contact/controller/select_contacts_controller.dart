@@ -1,3 +1,4 @@
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wechat/features/select_contact/repository/select_contact_repository.dart';
 
@@ -18,6 +19,11 @@ final selectContactControllerProvider = Provider((ref) {
     selectContactRepository: selectContactRepository,
   );
 });
+
+final unselectContactControllerProvider = FutureProvider(((ref) {
+  final selectContactRepository = ref.watch(selectContactsRepositoryProvider);
+  return selectContactRepository.unselectContact();
+}));
 
 class SelectContactController {
   final ProviderRef ref;

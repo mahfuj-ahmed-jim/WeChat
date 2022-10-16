@@ -43,15 +43,37 @@ class SelectContactRepository {
     return name;
   }
 
+  Future<bool> checkUserGotAccount(String userNumber) async {
+    bool isFound = false;
+    try {
+      var userCollection =
+          await firestore.collection('users').get(); // users list from firebase
+      for (var document in userCollection.docs) {
+        var userData =
+            UserModel.fromMap(document.data()); // convert to userModel class
+        if (userData.phoneNumber == userNumber) {
+          isFound = true;
+          break;
+        }
+      }
+    } catch (e) {
+      //
+    }
+    return isFound;
+  }
+
   Future<List<UserModel>> selectContact() async {
     List<UserModel> userList = [];
     try {
-      var userCollection = await firestore.collection('users').get(); // users list from firebase
+      var userCollection =
+          await firestore.collection('users').get(); // users list from firebase
       for (var document in userCollection.docs) {
-        var userData = UserModel.fromMap(document.data()); // convert to userModel class
-        String? name = await checkSavedUser(userData.phoneNumber); // checking if exist in mobile contact or not
+        var userData =
+            UserModel.fromMap(document.data()); // convert to userModel class
+        String? name = await checkSavedUser(
+            userData.phoneNumber); // checking if exist in mobile contact or not
         if (name != null) {
-          userData.setName(name); 
+          userData.setName(name);
           userList.add(userData);
         }
       }
@@ -59,5 +81,19 @@ class SelectContactRepository {
       debugPrint(e.toString());
     }
     return userList;
+  }
+
+  Future<List<Contact>> unselectContact() async {
+    List<Contact> unselectContact = [];
+    var contacts = await getContacts();
+    for (var contact in contacts) {
+      for (var numbers in contact.phones) {
+        if (!await checkUserGotAccount(
+            numbers.number.replaceAll('-', '').replaceAll(' ', ''))) {
+          unselectContact.add(contact);
+        }
+      }
+    }
+    return unselectContact;
   }
 }

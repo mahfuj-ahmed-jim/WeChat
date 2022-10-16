@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:story_view/story_view.dart';
+import 'package:wechat/common/enums/message_enum.dart';
+import 'package:wechat/common/utils/colors.dart';
 import 'package:wechat/common/widgets/loader.dart';
 import 'package:wechat/features/status/controller/status_controller.dart';
 import 'package:wechat/models/show_status.dart';
@@ -44,11 +46,22 @@ class _StoryViewScreenState extends ConsumerState<StoryViewScreen> {
 
   void initStoryPageItem() {
     for (int i = 0; i < widget.statuses.statusList.length; i++) {
-      stories.add(StoryItem.pageImage(
-        url: widget.statuses.statusList[i].url,
-        controller: storyController,
-        caption: widget.statuses.statusList[i].caption,
-      ));
+      if (widget.statuses.statusList[i].type == MessageEnum.image) {
+        stories.add(StoryItem.pageImage(
+          url: widget.statuses.statusList[i].url,
+          controller: storyController,
+          caption: widget.statuses.statusList[i].caption,
+        ));
+      } else if (widget.statuses.statusList[i].type == MessageEnum.text) {
+        stories.add(StoryItem.text(
+            title: widget.statuses.statusList[i].caption,
+            backgroundColor: backgroundColor));
+      } else if (widget.statuses.statusList[i].type == MessageEnum.video) {
+        stories.add(StoryItem.pageVideo(
+          widget.statuses.statusList[i].url,
+          caption: widget.statuses.statusList[i].caption,
+          controller: storyController));
+      }
     }
   }
 
