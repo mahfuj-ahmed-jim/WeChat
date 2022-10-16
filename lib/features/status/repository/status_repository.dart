@@ -26,6 +26,14 @@ class StatusRepository {
   StatusRepository(
       {required this.firestore, required this.auth, required this.ref});
 
+  void seenStatus({required StatusModel statusModel}) {
+    if (!statusModel.seen.contains(auth.currentUser!.uid)) {
+      firestore.collection('status').doc(statusModel.statusId).update({
+        'seen': FieldValue.arrayUnion([auth.currentUser!.uid])
+      });
+    }
+  }
+
   void uploadStatus(
       {required File file,
       required MessageEnum type,

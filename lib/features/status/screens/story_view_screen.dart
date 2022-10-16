@@ -1,21 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:story_view/story_view.dart';
 import 'package:wechat/common/widgets/loader.dart';
+import 'package:wechat/features/status/controller/status_controller.dart';
 import 'package:wechat/models/show_status.dart';
+import 'package:wechat/models/status_model.dart';
 
-class StoryViewScreen extends StatefulWidget {
+class StoryViewScreen extends ConsumerStatefulWidget {
   static const String routeName = '/story-views-screen';
   final ShowStatus statuses;
   const StoryViewScreen({super.key, required this.statuses});
 
   @override
-  State<StoryViewScreen> createState() => _StoryViewScreenState();
+  // ignore: no_logic_in_create_state
+  ConsumerState<StoryViewScreen> createState() =>
+      // ignore: no_logic_in_create_state
+      _StoryViewScreenState(statuses);
 }
 
-class _StoryViewScreenState extends State<StoryViewScreen> {
+class _StoryViewScreenState extends ConsumerState<StoryViewScreen> {
   StoryController storyController = StoryController();
-  String? caption, time;
+  String? caption;
   List<StoryItem> stories = [];
+  String? time;
+  bool isBuild = false;
+
+  _StoryViewScreenState(ShowStatus statuses) {
+    time = DateFormat('hh:mm a').format(statuses.statusList[0].createdAt);
+  }
 
   @override
   void initState() {
@@ -32,10 +45,15 @@ class _StoryViewScreenState extends State<StoryViewScreen> {
   void initStoryPageItem() {
     for (int i = 0; i < widget.statuses.statusList.length; i++) {
       stories.add(StoryItem.pageImage(
-          url: widget.statuses.statusList[i].url,
-          controller: storyController,
-          caption: widget.statuses.statusList[i].caption));
+        url: widget.statuses.statusList[i].url,
+        controller: storyController,
+        caption: widget.statuses.statusList[i].caption,
+      ));
     }
+  }
+
+  void seenStatus(StatusModel statusModel) {
+    ref.read(statusControllerProvider).seenStatus(statusModel: statusModel);
   }
 
   @override
@@ -55,7 +73,15 @@ class _StoryViewScreenState extends State<StoryViewScreen> {
                   },
                   onComplete: () => Navigator.pop(context),
                   onStoryShow: (value) {
-                    
+                    int position = stories.indexOf(value);
+                    position != 0 ? isBuild = true : null;
+                    if (isBuild) {
+                      setState(() {
+                        time = DateFormat('hh:mm a').format(
+                            widget.statuses.statusList[position].createdAt);
+                      });
+                    }
+                    seenStatus(widget.statuses.statusList[position]);
                   },
                 ),
                 Positioned(
@@ -81,12 +107,12 @@ class _StoryViewScreenState extends State<StoryViewScreen> {
                               style: const TextStyle(
                                   overflow: TextOverflow.ellipsis,
                                   fontSize: 18)),
-                          const Padding(
-                            padding: EdgeInsets.only(top: 2.0),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2.0),
                             child: Text(
-                              'Just Now',
+                              '$time',
                               maxLines: 1,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Colors.white,
                                   overflow: TextOverflow.ellipsis,
                                   fontSize: 14),

@@ -24,7 +24,8 @@ class ConversationList extends ConsumerWidget {
             shrinkWrap: true,
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
-              List<ChatContact> chatContactData = snapshot.data!.reversed.toList();
+              List<ChatContact> chatContactData =
+                  snapshot.data!.reversed.toList();
               return Padding(
                 padding: index == 0
                     ? const EdgeInsets.only(top: 10)
@@ -51,24 +52,29 @@ class ConversationList extends ConsumerWidget {
                           style: TextStyle(
                               overflow: TextOverflow.ellipsis,
                               fontSize: 18,
-                              fontWeight: chatContactData[index].unseenMessages == 0
-                                  ? FontWeight.normal
-                                  : FontWeight.bold),
+                              fontWeight:
+                                  chatContactData[index].unseenMessages == 0
+                                      ? FontWeight.normal
+                                      : FontWeight.bold),
                         ),
                         subtitle: Padding(
                           padding: const EdgeInsets.only(top: 6.0),
                           child: Text(
                             maxLines: 1,
-                            chatContactData[index].lastMessage,
+                            chatContactData[index].isMe
+                                ? 'You: ${chatContactData[index].lastMessage}'
+                                : chatContactData[index].lastMessage,
                             style: TextStyle(
-                                color: chatContactData[index].unseenMessages == 0
-                                    ? Colors.grey
-                                    : Colors.white,
+                                color:
+                                    chatContactData[index].unseenMessages == 0
+                                        ? Colors.grey
+                                        : Colors.white,
                                 overflow: TextOverflow.ellipsis,
                                 fontSize: 14,
-                                fontWeight: chatContactData[index].unseenMessages == 0
-                                    ? FontWeight.normal
-                                    : FontWeight.bold),
+                                fontWeight:
+                                    chatContactData[index].unseenMessages == 0
+                                        ? FontWeight.normal
+                                        : FontWeight.bold),
                           ),
                         ),
                         leading: CircleAvatar(
@@ -85,9 +91,10 @@ class ConversationList extends ConsumerWidget {
                               DateFormat('hh:mm a')
                                   .format(chatContactData[index].timeSent),
                               style: TextStyle(
-                                  color: chatContactData[index].unseenMessages == 0
-                                      ? Colors.grey
-                                      : Colors.white,
+                                  color:
+                                      chatContactData[index].unseenMessages == 0
+                                          ? Colors.grey
+                                          : Colors.white,
                                   fontSize: 13,
                                   fontWeight:
                                       chatContactData[index].unseenMessages == 0
@@ -95,13 +102,15 @@ class ConversationList extends ConsumerWidget {
                                           : FontWeight.bold),
                             ),
                             Padding(
-                              padding: chatContactData[index].unseenMessages == 0
-                                  ? const EdgeInsets.only(top: 0.0)
-                                  : const EdgeInsets.only(top: 5.0),
+                              padding:
+                                  chatContactData[index].unseenMessages == 0
+                                      ? const EdgeInsets.only(top: 0.0)
+                                      : const EdgeInsets.only(top: 5.0),
                               child: CircleAvatar(
-                                radius: chatContactData[index].unseenMessages == 0
-                                    ? 0
-                                    : 10.5,
+                                radius:
+                                    chatContactData[index].unseenMessages == 0
+                                        ? 0
+                                        : 10.5,
                                 backgroundColor: tabColor,
                                 child: Text(
                                   '${chatContactData[index].unseenMessages}',
