@@ -40,7 +40,7 @@ class ConversationList extends ConsumerWidget {
                           arguments: {
                             'name': chatContactData[index].name,
                             'uid': chatContactData[index].contactId,
-                            'isGroupChat': false,
+                            'isGroupChat': chatContactData[index].isGroup,
                             'profilePic': chatContactData[index].profilePic,
                           },
                         );

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,9 +8,11 @@ import 'package:wechat/common/utils/colors.dart';
 import 'package:wechat/common/utils/utils.dart';
 import 'package:wechat/common/widgets/error.dart';
 import 'package:wechat/common/widgets/loader.dart';
+import 'package:wechat/features/chat/screens/mobile_chat_screen.dart';
 import 'package:wechat/features/group/controller/group_controller.dart';
 import 'package:wechat/features/select_contact/controller/select_contacts_controller.dart';
 import 'package:wechat/features/select_contact/widget/selected_contacts.dart';
+import 'package:wechat/models/group_model.dart';
 
 class CreateGroupScreen extends ConsumerStatefulWidget {
   static const String routeName = '/create-group';
@@ -27,16 +31,30 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
     setState(() {});
   }
 
-  void createGoup() {
+  void createGoup() async {
     if (_groupNameController.text.trim().isNotEmpty) {
-      ref.read(groupControllerProvider).createGroup(
-          context: context,
-          name: _groupNameController.text.trim(),
-          file: image,
-          userList: ref.read(selectedGroupContacts));
+      GroupModel? groupModel = await ref
+          .read(groupControllerProvider)
+          .createGroup(
+              context: context,
+              name: _groupNameController.text.trim(),
+              file: image,
+              userList: ref.read(selectedGroupContacts));
+
       // coming bakc to the original state
       ref.read(selectedGroupContacts.state).update((state) => []);
+
       Navigator.pop(context);
+      Navigator.pushNamed(
+        context,
+        MobileChatScreen.routeName,
+        arguments: {
+          'name': groupModel!.name,
+          'uid': groupModel.groupId,
+          'isGroupChat': true,
+          'profilePic': groupModel.groupPic,
+        },
+      );
     }
   }
 

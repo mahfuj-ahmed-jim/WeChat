@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wechat/common/repositories/common_firebase_storage_repository.dart';
 import 'package:wechat/common/utils/utils.dart';
+import 'package:wechat/features/chat/controller/chat_controller.dart';
 import 'package:wechat/models/group_model.dart';
 import 'package:wechat/models/user_model.dart';
 
@@ -23,17 +24,17 @@ class GroupRepository {
   GroupRepository(
       {required this.firestore, required this.auth, required this.ref});
 
-  void createGroup(
+  Future<GroupModel?> createGroup(
       {required BuildContext context,
       required String name,
       required File? file,
       required List<UserModel> userList}) async {
+    GroupModel? group;
+
     try {
-      print('1');
       List<String> userIds = [];
       for (var user in userList) {
         userIds.add(user.uid);
-        print(user.uid);
       }
       var groupId = const Uuid().v1();
 
@@ -49,8 +50,10 @@ class GroupRepository {
               file,
             );
       }
+
       List<String> admins = [auth.currentUser!.uid];
-      GroupModel group = GroupModel(
+
+      group = GroupModel(
           senderId: auth.currentUser!.uid,
           name: name,
           groupId: groupId,
@@ -60,8 +63,21 @@ class GroupRepository {
           admins: admins,
           timeSent: DateTime.now());
       await firestore.collection('groups').doc(groupId).set(group.toMap());
+
+      var userData =
+          await firestore.collection('users').doc(auth.currentUser?.uid).get();
+      var senderUserData = UserModel.fromMap(userData.data()!);
+
+      ref.read(chatControllerProvider).saveDataToContactsSubcollection(
+          senderUserData,
+          null,
+          group,
+          '${senderUserData.name} created the group',
+          DateTime.now(),
+          true);
     } catch (e) {
       showSnackBar(context: context, content: e.toString());
     }
+    return group;
   }
 }

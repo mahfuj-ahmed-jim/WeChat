@@ -7,7 +7,9 @@ import 'package:wechat/common/provider/message_reply_provider.dart';
 import 'package:wechat/features/auth/controller/auth_controller.dart';
 import 'package:wechat/features/chat/repositories/chat_repository.dart';
 import 'package:wechat/models/chat_contact_model.dart';
+import 'package:wechat/models/group_model.dart';
 import 'package:wechat/models/message_model.dart';
+import 'package:wechat/models/user_model.dart';
 
 final chatControllerProvider = Provider((ref) {
   final chatRepository = ref.watch(chatRepositoryProvider);
@@ -31,6 +33,18 @@ class ChatController {
 
   Stream<List<Message>> chatStream(String recieverUserId) {
     return chatRepository.getChatStream(recieverUserId);
+  }
+
+  void saveDataToContactsSubcollection(
+    UserModel senderUserData,
+    UserModel? recieverUserData,
+    GroupModel? groupModel,
+    String text,
+    DateTime timeSent,
+    bool isGroupChat,
+  ) {
+    return chatRepository.saveDataToContactsSubcollection(senderUserData,
+        recieverUserData, groupModel, text, timeSent, isGroupChat);
   }
 
   void sendTextMessage(

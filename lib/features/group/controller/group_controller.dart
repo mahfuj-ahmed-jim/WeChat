@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wechat/features/group/repository/group_repository.dart';
+import 'package:wechat/models/group_model.dart';
 import 'package:wechat/models/user_model.dart';
 
 final groupControllerProvider = Provider(((ref) {
@@ -16,7 +17,7 @@ class GroupController {
 
   GroupController({required this.groupRepository, required this.ref});
 
-  void createGroup(
+  Future<GroupModel?> createGroup(
       {required BuildContext context,
       required String name,
       required File? file,

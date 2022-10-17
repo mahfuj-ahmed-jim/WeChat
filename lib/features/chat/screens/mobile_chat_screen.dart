@@ -45,7 +45,36 @@ class MobileChatScreen extends ConsumerWidget {
         ),
         titleSpacing: 0,
         title: isGroupChat
-            ? Text(name)
+            ? Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(
+                      profilePic,
+                    ),
+                    radius: 20,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                      const Text(
+                        'tap here for group info',
+                        style: TextStyle(color: greyColor, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ],
+              )
             : StreamBuilder<UserModel>(
                 stream: ref.read(authControllerProvider).userDataById(uid),
                 builder: (context, snapshot) {
@@ -77,8 +106,7 @@ class MobileChatScreen extends ConsumerWidget {
                           Text(
                             snapshot.data!.isOnline
                                 ? 'online'
-                                : 'last seen  at ${DateFormat('hh:mm a')
-                                    .format(snapshot.data!.lastSeen)}',
+                                : 'last seen  at ${DateFormat('hh:mm a').format(snapshot.data!.lastSeen)}',
                             style:
                                 const TextStyle(color: greyColor, fontSize: 12),
                           ),
