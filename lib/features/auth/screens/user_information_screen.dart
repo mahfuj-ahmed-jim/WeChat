@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wechat/common/utils/colors.dart';
 import 'package:wechat/common/utils/utils.dart';
 import 'package:wechat/features/auth/controller/auth_controller.dart';
 
@@ -45,7 +46,6 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -69,10 +69,14 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
                   Positioned(
                     bottom: -10,
                     left: 80,
-                    child: IconButton(
-                      onPressed: selectImage,
-                      icon: const Icon(
-                        Icons.add_a_photo,
+                    child: CircleAvatar(
+                      backgroundColor: backgroundColor,
+                      child: IconButton(
+                        onPressed: selectImage,
+                        icon: const Icon(
+                          Icons.add_a_photo,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),

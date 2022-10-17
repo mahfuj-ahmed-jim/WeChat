@@ -5,6 +5,7 @@ import 'package:wechat/features/auth/screens/login_screen.dart';
 import 'package:wechat/features/auth/screens/otp_screen.dart';
 import 'package:wechat/features/auth/screens/user_information_screen.dart';
 import 'package:wechat/features/chat/screens/mobile_chat_screen.dart';
+import 'package:wechat/features/group/screen/create_group_screen.dart';
 import 'package:wechat/features/select_contact/screens/select_contacts_screen.dart';
 import 'package:wechat/features/status/screens/confirm_status_screen.dart';
 import 'package:wechat/features/status/screens/story_view_screen.dart';
@@ -37,6 +38,10 @@ Route<dynamic> generateRoute(RouteSettings settings) {
         builder: (context) => StoryViewScreen(
           statuses: statuses,
         ),
+      );
+    case CreateGroupScreen.routeName:
+      return MaterialPageRoute(
+        builder: (context) => const CreateGroupScreen(),
       );
     case MobileChatScreen.routeName:
       final arguments = settings.arguments as Map<String, dynamic>;

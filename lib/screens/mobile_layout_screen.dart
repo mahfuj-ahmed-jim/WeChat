@@ -6,6 +6,7 @@ import 'package:wechat/common/utils/colors.dart';
 import 'package:wechat/common/utils/utils.dart';
 import 'package:wechat/features/auth/controller/auth_controller.dart';
 import 'package:wechat/features/chat/widgets/conversation_list.dart';
+import 'package:wechat/features/group/screen/create_group_screen.dart';
 import 'package:wechat/features/select_contact/screens/select_contacts_screen.dart';
 import 'package:wechat/features/status/screens/confirm_status_screen.dart';
 import 'package:wechat/features/status/screens/status_screen.dart';
@@ -95,7 +96,7 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
                 color: Colors.white,
               ),
               itemBuilder: (context) => [
-                /*PopupMenuItem(
+                PopupMenuItem(
                   child: const Text(
                     'Create Group',
                   ),
@@ -103,7 +104,7 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
                     () => Navigator.pushNamed(
                         context, CreateGroupScreen.routeName),
                   ),
-                )*/
+                )
               ],
             ),
           ],

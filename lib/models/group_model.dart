@@ -1,0 +1,46 @@
+class GroupModel {
+  final String senderId;
+  final String name;
+  final String groupId;
+  final String lastMessage;
+  final String groupPic;
+  final List<String> admins;
+  final List<String> membersUid;
+  final DateTime timeSent;
+  GroupModel({
+    required this.senderId,
+    required this.name,
+    required this.groupId,
+    required this.lastMessage,
+    required this.groupPic,
+    required this.membersUid,
+    required this.timeSent,
+    required this.admins
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'senderId': senderId,
+      'name': name,
+      'groupId': groupId,
+      'lastMessage': lastMessage,
+      'groupPic': groupPic,
+      'membersUid': membersUid,
+      'admins': admins,
+      'timeSent': timeSent.millisecondsSinceEpoch,
+    };
+  }
+
+  factory GroupModel.fromMap(Map<String, dynamic> map) {
+    return GroupModel(
+      senderId: map['senderId'] ?? '',
+      name: map['name'] ?? '',
+      groupId: map['groupId'] ?? '',
+      lastMessage: map['lastMessage'] ?? '',
+      groupPic: map['groupPic'] ?? '',
+      membersUid: List<String>.from(map['membersUid']),
+      admins: List<String>.from(map['admins']),
+      timeSent: DateTime.fromMillisecondsSinceEpoch(map['timeSent']),
+    );
+  }
+}
