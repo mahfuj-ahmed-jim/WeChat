@@ -46,8 +46,9 @@ class _ChatListState extends ConsumerState<ChatList> {
   Widget build(BuildContext context) {
     List<Message> messageList;
     return StreamBuilder<List<Message>>(
-        stream:
-            ref.read(chatControllerProvider).chatStream(widget.recieverUserId),
+        stream: ref
+            .read(chatControllerProvider)
+            .chatStream(widget.recieverUserId, widget.isGroupChat),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Loader();
@@ -68,15 +69,15 @@ class _ChatListState extends ConsumerState<ChatList> {
                 messageList = snapshot.data!.reversed.toList();
                 var timeSent =
                     DateFormat('hh:mm a').format(messageList[index].timeSent);
-
+            
                 if (!messageList[index].isSeen &&
-                    messageList[index].recieverid ==
+                    messageList[index].senderId !=
                         FirebaseAuth.instance.currentUser!.uid) {
                   ref.read(chatControllerProvider).setChatMessageSeen(
-                        context,
-                        widget.recieverUserId,
-                        messageList[index].messageId,
-                      );
+                      context,
+                      widget.recieverUserId,
+                      messageList[index].messageId,
+                      widget.isGroupChat);
                 }
                 if (messageList[index].senderId ==
                     FirebaseAuth.instance.currentUser!.uid) {
@@ -115,26 +116,28 @@ class _ChatListState extends ConsumerState<ChatList> {
                       ? const EdgeInsets.only(top: 10)
                       : EdgeInsets.zero,
                   child: SenderMessageCard(
-                    name: widget.receiverName,
-                    message: messageList[index].text,
-                    date: timeSent,
-                    type: messageList[index].type,
-                    repliedTo: messageList[index].repliedTo,
-                    repliedMessageType: messageList[index].repliedMessageType,
-                    repliedText: messageList[index].repliedMessage,
-                    previousMessage: index != (snapshot.data!.length) - 1 &&
-                            messageList[index + 1].senderId !=
-                                FirebaseAuth.instance.currentUser!.uid
-                        ? true
-                        : false,
-                    nextMessage: index != 0 &&
-                            messageList[index - 1].senderId !=
-                                FirebaseAuth.instance.currentUser!.uid
-                        ? true
-                        : false,
-                    onRightSwipe: (() => onMessageSwipe(messageList[index].text,
-                        false, messageList[index].type)),
-                  ),
+                      name: messageList[index].senderId,
+                      message: messageList[index].text,
+                      date: timeSent,
+                      type: messageList[index].type,
+                      repliedTo: messageList[index].repliedTo,
+                      repliedMessageType: messageList[index].repliedMessageType,
+                      repliedText: messageList[index].repliedMessage,
+                      previousMessage: index != (snapshot.data!.length) - 1 &&
+                              messageList[index + 1].senderId !=
+                                  FirebaseAuth.instance.currentUser!.uid
+                          ? true
+                          : false,
+                      nextMessage: index != 0 &&
+                              messageList[index - 1].senderId !=
+                                  FirebaseAuth.instance.currentUser!.uid
+                          ? true
+                          : false,
+                      onRightSwipe: (() => onMessageSwipe(
+                          messageList[index].text,
+                          false,
+                          messageList[index].type)),
+                      isGroup: widget.isGroupChat),
                 );
               },
             ),

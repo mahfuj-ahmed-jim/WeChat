@@ -31,8 +31,8 @@ class ChatController {
     return chatRepository.getChatContacts();
   }
 
-  Stream<List<Message>> chatStream(String recieverUserId) {
-    return chatRepository.getChatStream(recieverUserId);
+  Stream<List<Message>> chatStream(String recieverUserId, bool isGroup) {
+    return chatRepository.getChatStream(recieverUserId, isGroup);
   }
 
   void saveDataToContactsSubcollection(
@@ -111,11 +111,13 @@ class ChatController {
     BuildContext context,
     String recieverUserId,
     String messageId,
+    bool isGroup
   ) {
     chatRepository.setChatMessageSeen(
       context,
       recieverUserId,
       messageId,
+      isGroup
     );
   }
 }

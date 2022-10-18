@@ -6,19 +6,20 @@ import 'package:wechat/common/utils/colors.dart';
 import 'package:wechat/features/chat/widgets/display_message.dart';
 
 class SenderMessageCard extends StatelessWidget {
-  const SenderMessageCard({
-    Key? key,
-    required this.name,
-    required this.message,
-    required this.date,
-    required this.type,
-    required this.repliedText,
-    required this.repliedTo,
-    required this.repliedMessageType,
-    required this.previousMessage,
-    required this.onRightSwipe,
-    required this.nextMessage,
-  }) : super(key: key);
+  const SenderMessageCard(
+      {Key? key,
+      required this.name,
+      required this.message,
+      required this.date,
+      required this.type,
+      required this.repliedText,
+      required this.repliedTo,
+      required this.repliedMessageType,
+      required this.previousMessage,
+      required this.onRightSwipe,
+      required this.nextMessage,
+      required this.isGroup})
+      : super(key: key);
   final String name;
   final String message;
   final String date;
@@ -29,6 +30,7 @@ class SenderMessageCard extends StatelessWidget {
   final MessageEnum repliedMessageType;
   final bool previousMessage;
   final bool nextMessage;
+  final bool isGroup;
 
   @override
   Widget build(BuildContext context) {
@@ -132,10 +134,22 @@ class SenderMessageCard extends StatelessWidget {
                                   bottom: 25,
                                 )
                               : const EdgeInsets.all(2),
-                          child: DisplayMessage(
-                            message: message,
-                            type: type,
-                            isReply: true,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              isGroup
+                                  ? Text(
+                                      name,
+                                      style: const TextStyle(color: tabColor),
+                                    )
+                                  : const SizedBox(),
+                              const SizedBox(height: 5),
+                              DisplayMessage(
+                                message: message,
+                                type: type,
+                                isReply: true,
+                              ),
+                            ],
                           ),
                         ),
                         Positioned(
