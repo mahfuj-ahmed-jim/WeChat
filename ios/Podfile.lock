@@ -596,6 +596,40 @@ PODS:
     - abseil/base/base_internal
     - abseil/base/config
     - abseil/meta/type_traits
+  - agora_rtc_engine (5.3.1):
+    - AgoraIrisRTC_iOS (= 3.7.0.3)
+    - AgoraRtcEngine_iOS (= 3.7.0.3)
+    - Flutter
+  - agora_rtm (1.1.1):
+    - AgoraRtm_iOS (= 1.4.10)
+    - Flutter
+  - agora_uikit (0.0.1):
+    - Flutter
+  - AgoraIrisRTC_iOS (3.7.0.3)
+  - AgoraRtcEngine_iOS (3.7.0.3):
+    - AgoraRtcEngine_iOS/AINS (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/AV1Dec (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/ContentInspect (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/FullAudioFormat (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/ReplayKit (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/ROIEnc (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/RtcBasic (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/SpatialAudio (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/SuperResolution (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/VideoPreprocess (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/VirtualBackground (= 3.7.0.3)
+  - AgoraRtcEngine_iOS/AINS (3.7.0.3)
+  - AgoraRtcEngine_iOS/AV1Dec (3.7.0.3)
+  - AgoraRtcEngine_iOS/ContentInspect (3.7.0.3)
+  - AgoraRtcEngine_iOS/FullAudioFormat (3.7.0.3)
+  - AgoraRtcEngine_iOS/ReplayKit (3.7.0.3)
+  - AgoraRtcEngine_iOS/ROIEnc (3.7.0.3)
+  - AgoraRtcEngine_iOS/RtcBasic (3.7.0.3)
+  - AgoraRtcEngine_iOS/SpatialAudio (3.7.0.3)
+  - AgoraRtcEngine_iOS/SuperResolution (3.7.0.3)
+  - AgoraRtcEngine_iOS/VideoPreprocess (3.7.0.3)
+  - AgoraRtcEngine_iOS/VirtualBackground (3.7.0.3)
+  - AgoraRtm_iOS (1.4.10)
   - audioplayers_darwin (0.0.1):
     - Flutter
   - BoringSSL-GRPC (0.0.24):
@@ -792,6 +826,9 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - agora_rtc_engine (from `.symlinks/plugins/agora_rtc_engine/ios`)
+  - agora_rtm (from `.symlinks/plugins/agora_rtm/ios`)
+  - agora_uikit (from `.symlinks/plugins/agora_uikit/ios`)
   - audioplayers_darwin (from `.symlinks/plugins/audioplayers_darwin/ios`)
   - cached_video_player (from `.symlinks/plugins/cached_video_player/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
@@ -812,6 +849,9 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - abseil
+    - AgoraIrisRTC_iOS
+    - AgoraRtcEngine_iOS
+    - AgoraRtm_iOS
     - BoringSSL-GRPC
     - CocoaAsyncSocket
     - Firebase
@@ -840,6 +880,12 @@ SPEC REPOS:
     - PromisesObjC
 
 EXTERNAL SOURCES:
+  agora_rtc_engine:
+    :path: ".symlinks/plugins/agora_rtc_engine/ios"
+  agora_rtm:
+    :path: ".symlinks/plugins/agora_rtm/ios"
+  agora_uikit:
+    :path: ".symlinks/plugins/agora_uikit/ios"
   audioplayers_darwin:
     :path: ".symlinks/plugins/audioplayers_darwin/ios"
   cached_video_player:
@@ -875,6 +921,12 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   abseil: ebe5b5529fb05d93a8bdb7951607be08b7fa71bc
+  agora_rtc_engine: 47e0ddc177bae1b85eb00d01a0ea546d87ce0b8b
+  agora_rtm: 83e35f136067be1ea7f09656f51ec29ccc280b63
+  agora_uikit: ca47b21e2af19474ddd8ec153670c2dc8cf3a9e8
+  AgoraIrisRTC_iOS: d802443ae16f043e7b2805c978880eb62ee8154c
+  AgoraRtcEngine_iOS: 549bb3853d5afb18fabca4197786f39f31141da8
+  AgoraRtm_iOS: 95e7070466f42a6494435a7f39fd2b13fc143cbf
   audioplayers_darwin: 877d9a4d06331c5c374595e46e16453ac7eafa40
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   cached_video_player: 9f225ed1c46bda0fe287b8288742329d441e2cc5
@@ -918,6 +970,6 @@ SPEC CHECKSUMS:
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
   video_player_avfoundation: e489aac24ef5cf7af82702979ed16f2a5ef84cff
 
-PODFILE CHECKSUM: 03a9ff614efd33af53c9c367474205dde0454aa4
+PODFILE CHECKSUM: b0fca18a9bb44772e0f44d484492e0a4ae620476
 
 COCOAPODS: 1.11.3
