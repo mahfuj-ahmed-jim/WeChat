@@ -28,6 +28,11 @@ class AuthController {
     return user;
   }
 
+  Future<UserModel?> getUserById(
+      {required String userId}) {
+    return authRepository.getUserById(userId: userId);
+  }
+
   void signInWithPhone(BuildContext context, String phoneNumber) {
     authRepository.signInWithPhone(context, phoneNumber);
   }

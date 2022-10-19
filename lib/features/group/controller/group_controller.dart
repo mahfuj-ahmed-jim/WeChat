@@ -25,4 +25,9 @@ class GroupController {
     return groupRepository.createGroup(
         context: context, name: name, file: file, userList: userList);
   }
+
+  Future<GroupModel> getGroupDetails(
+      {required String groupId}){
+        return groupRepository.getGroupDetails(groupId: groupId);
+      }
 }

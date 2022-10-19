@@ -8,6 +8,7 @@ import 'package:wechat/common/enums/message_enum.dart';
 import 'package:wechat/common/provider/message_reply_provider.dart';
 import 'package:wechat/common/repositories/common_firebase_storage_repository.dart';
 import 'package:wechat/common/utils/utils.dart';
+import 'package:wechat/features/auth/controller/auth_controller.dart';
 import 'package:wechat/features/select_contact/controller/select_contacts_controller.dart';
 import 'package:wechat/models/chat_contact_model.dart';
 import 'package:wechat/models/group_model.dart';
@@ -102,9 +103,11 @@ class ChatRepository {
           .snapshots()
           .map((event) {
         List<Message> messages = [];
+
         for (var document in event.docs) {
           messages.add(Message.fromMap(document.data()));
         }
+
         return messages;
       });
     } else {
@@ -118,9 +121,11 @@ class ChatRepository {
           .snapshots()
           .map((event) {
         List<Message> messages = [];
+
         for (var document in event.docs) {
           messages.add(Message.fromMap(document.data()));
         }
+
         return messages;
       });
     }
@@ -259,9 +264,12 @@ class ChatRepository {
     required MessageReply? messageReply,
     required bool isGroupChat,
   }) async {
+    var user = await ref.read(authControllerProvider).getUserById(userId: auth.currentUser!.uid);
+
     final message = Message(
         senderId: auth.currentUser!.uid,
         recieverid: recieverUserId,
+        senderPhoneNumber: user!.phoneNumber,
         text: text,
         type: messageType,
         timeSent: timeSent,
@@ -501,6 +509,14 @@ class ChatRepository {
             .collection('messages')
             .doc(messageId)
             .update({'isSeen': true});
+
+        // update unseen messages
+        await firestore
+            .collection('users')
+            .doc(auth.currentUser!.uid)
+            .collection('chats')
+            .doc(recieverUserId) // group if is isGroup
+            .update({"unseenMessages": 0});
       } else {
         // users -> user id -> reciever id -> messages -> message id -> store message
         await firestore

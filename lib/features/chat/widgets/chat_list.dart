@@ -6,9 +6,14 @@ import 'package:intl/intl.dart';
 import 'package:wechat/common/enums/message_enum.dart';
 import 'package:wechat/common/provider/message_reply_provider.dart';
 import 'package:wechat/common/widgets/loader.dart';
+import 'package:wechat/features/auth/controller/auth_controller.dart';
 import 'package:wechat/features/chat/controller/chat_controller.dart';
 import 'package:wechat/features/chat/widgets/my_message_card.dart';
+import 'package:wechat/features/group/controller/group_controller.dart';
+import 'package:wechat/features/select_contact/controller/select_contacts_controller.dart';
+import 'package:wechat/models/group_model.dart';
 import 'package:wechat/models/message_model.dart';
+import 'package:wechat/models/user_model.dart';
 
 import 'sender_message_card.dart';
 
@@ -29,6 +34,9 @@ class ChatList extends ConsumerStatefulWidget {
 
 class _ChatListState extends ConsumerState<ChatList> {
   final ScrollController messageController = ScrollController();
+  GroupModel? groupModel;
+  List<UserModel> groupMembers = [];
+  bool init = false;
 
   @override
   void dispose() {
@@ -42,10 +50,54 @@ class _ChatListState extends ConsumerState<ChatList> {
         .update((state) => MessageReply(message, isMe, type));
   }
 
+  void getGroupInfromation() async {
+    groupModel = await ref
+        .read(groupControllerProvider)
+        .getGroupDetails(groupId: widget.recieverUserId);
+
+    for (var memberId in groupModel!.membersUid) {
+      var member = await ref
+          .read(authControllerProvider)
+          .getUserById(userId: memberId);
+
+      String? name = await ref
+          .read(selectContactControllerProvider)
+          .checkSavedUser(member!.phoneNumber);
+
+      if (name != null) {
+        member.setName(name);
+      } else {
+        member.setName(member.phoneNumber);
+      }
+
+      groupMembers.add(member);
+    }
+
+    init = true;
+    setState(() {});
+  }
+
+  String getUserName(String userId) {
+    String name = 'User';
+
+    for (var member in groupMembers) {
+      if (userId == member.uid) {
+        name = member.name;
+        break;
+      }
+    }
+
+    return name;
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Message> messageList;
-    return StreamBuilder<List<Message>>(
+    if (widget.isGroupChat && !init) {
+      getGroupInfromation();
+    }
+
+    return StreamBuilder<List<Message>> (
         stream: ref
             .read(chatControllerProvider)
             .chatStream(widget.recieverUserId, widget.isGroupChat),
@@ -69,7 +121,7 @@ class _ChatListState extends ConsumerState<ChatList> {
                 messageList = snapshot.data!.reversed.toList();
                 var timeSent =
                     DateFormat('hh:mm a').format(messageList[index].timeSent);
-            
+
                 if (!messageList[index].isSeen &&
                     messageList[index].senderId !=
                         FirebaseAuth.instance.currentUser!.uid) {
@@ -116,7 +168,9 @@ class _ChatListState extends ConsumerState<ChatList> {
                       ? const EdgeInsets.only(top: 10)
                       : EdgeInsets.zero,
                   child: SenderMessageCard(
-                      name: messageList[index].senderId,
+                      name: widget.isGroupChat && init
+                          ? getUserName(messageList[index].senderId)
+                          : messageList[index].senderPhoneNumber,
                       message: messageList[index].text,
                       date: timeSent,
                       type: messageList[index].type,
@@ -124,13 +178,13 @@ class _ChatListState extends ConsumerState<ChatList> {
                       repliedMessageType: messageList[index].repliedMessageType,
                       repliedText: messageList[index].repliedMessage,
                       previousMessage: index != (snapshot.data!.length) - 1 &&
-                              messageList[index + 1].senderId !=
-                                  FirebaseAuth.instance.currentUser!.uid
+                              messageList[index + 1].senderId ==
+                                  messageList[index].senderId
                           ? true
                           : false,
                       nextMessage: index != 0 &&
-                              messageList[index - 1].senderId !=
-                                  FirebaseAuth.instance.currentUser!.uid
+                              messageList[index - 1].senderId ==
+                                  messageList[index].senderId
                           ? true
                           : false,
                       onRightSwipe: (() => onMessageSwipe(

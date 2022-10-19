@@ -80,4 +80,19 @@ class GroupRepository {
     }
     return group;
   }
+
+  Future<GroupModel> getGroupDetails(
+      {required String groupId}) async {
+    GroupModel? groupModel;
+
+    try {
+      var doc = await firestore.collection('groups').doc(groupId).get();
+      groupModel = GroupModel.fromMap(doc.data()!);
+    } catch (e) {
+      //
+    }
+
+    return groupModel!;
+  }
+  
 }
