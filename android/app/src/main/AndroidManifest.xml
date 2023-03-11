@@ -13,7 +13,7 @@
     <uses-permission  android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission  android:name="android.permission.BLUETOOTH"  />
     <application
-        android:label="wechat"
+        android:label="We Chat"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
